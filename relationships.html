@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>D3.JS graph</title>
+  <link rel="stylesheet" href="style.css">
+  <link
+    href="imgs/layout/favicon_64.png"
+    rel="icon" type="image/x-icon"
+  />
+  <script src="./libs/jquery-2.1.4.min.js"></script>
+  <script src="./libs/d3.v3.min.js"></script>
+  <script src="./data/graphRS.Glue.js"></script>
+  <script src="./data/graphI1.js"></script>
+  <script src="./data/graphI1M.js"></script>
+  <script src="./data/graphI2.js"></script>
+  <script src="./data/graphI1y2.js"></script>
+  </script>
+</head>
+<body>
+  <div id="currentView">0</div>
+  <script>
+    const graphList = ["graphRS", "graphI1", "graphI1M", "graphI1MR", "graphI2", "graphI1y2"];
+    let currentView = parseInt(document.getElementById("currentView").innerText);
+    let dataSource;
+    let graph;
+    var radius = d3.scale.sqrt().range([0, 6]);
+
+    function setCurrentView(number) {
+      document.getElementById("currentView").innerText = number;
+    }
+
+    function refreshGraph(refresh=false) {
+      var width = 2400,
+          height = 1350;
+
+      var color = d3.scale.category20b();
+
+      var svg = d3.select("body").append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .attr("id","svg")
+
+      if (refresh) {
+        d3.select("svg").remove()
+      }
+
+      var force = d3.layout.force()
+          .size([width, height])
+          .charge(-400)
+          .linkDistance(function(d) { return radius(d.source.size) + radius(d.target.size) + 60; }); //antes 100
+
+      function getGraph(currentView=0, callback) {
+        // try { document.getElementById("i22").innerHTML = "IMAB2"; }      catch(e) {/*No instanciado*/}
+        // try { document.getElementById("i2").innerHTML  = "IMAB&nbsp;"; } catch(e) {/*No instanciado*/}
+        // try { document.getElementById("i21").innerHTML = "IMAB1"; }      catch(e) {/*No instanciado*/}
+        // try { document.getElementById("i12").innerHTML = "IDAB2"; }      catch(e) {/*No instanciado*/}
+        // try { document.getElementById("i1").innerText  = "IDAB&nbsp;"; } catch(e) {/*No instanciado*/}
+        // try { document.getElementById("i11").innerHTML = "IDAB1"; }      catch(e) {/*No instanciado*/}
+        if (currentView === 0) {
+          try {
+            document.getElementById("i1").innerText  = "Común";
+            document.getElementById("svg").style.display = "";
+          } catch(e) {/*No instanciado*/}
+          getGraphRS(function(graph){
+            callback(graph);
+          });
+        } else if (currentView === 1) {
+          document.getElementById("i1").innerText = "Informes";
+          document.getElementById("svg").style.display = "";
+          getGraphI1(function(graph){
+            callback(graph);
+          });
+        } else if (currentView === 2) {
+          document.getElementById("i1").innerText = "Origen";
+          document.getElementById("svg").style.display = "";
+          getGraphI1M(function(graph){
+            callback(graph);
+          });
+        } else if (currentView === 3) {
+          document.getElementById("i1").innerText = "Origen";
+          document.getElementById("logs").innerHTML = "<a href=\"file:///C:/Users/67456814/Redexis/Tyrion/ANALYTICS/graph1MR.html#\">Mostrar relaciones</a>"
+          document.getElementById("svg").style.display = "none";
+          getGraphI1M(function(graph){
+            callback(graph);
+          });
+        } else if (currentView === 4) {
+          document.getElementById("sapbi").innerText = "Sap BI";
+          document.getElementById("svg").style.display = "";
+          getGraphI2(function(graph){
+            callback(graph);
+          });
+        } else if (currentView === 5) {
+          document.getElementById("svg").style.display = "";
+          getGraphI1y2(function(graph){
+            callback(graph);
+          });
+        }
+      };
+
+      const currentView = parseInt(document.getElementById("currentView").innerText)
+      graph = getGraph(currentView, function(graph) {
+        force
+            .nodes(graph.nodes)
+            .links(graph.links)
+            .on("tick", tick)
+            .start();
+
+        var link = svg.selectAll(".link")
+            .data(graph.links)
+            .enter().append("g")
+            .attr("class", "link");
+
+        link.append("line")
+            .style("stroke-width", function(d) {
+              if (d.source.u) {
+                return (d.bond * 2 - 1) * 2 + "px";
+              } else if (d.target.u) {
+                return (d.bond * 2 - 1) * 2 + "px";
+              } else if (d.color) {
+                return "3px";
+              } else {
+                return "1px";
+              }
+            })
+            .attr("marker-end", "url(#end)")
+            .style("stroke", function(d){
+              if (d.source.u) {
+                return "#006600";
+              } else if (d.target.u) {
+                return "#99CC66";
+              } else if (d.source.size === 0 || d.target.size === 0) {
+                return "#FFFFFF";
+              } else if (d.color) {
+                return d.color;
+              } else {
+                return "#CCCCCC";
+              }
+            });
+
+        link.filter(function(d) { return d.bond > 1; }).append("line")
+            .attr("class", "separator");
+
+        var node = svg.selectAll(".node")
+            .data(graph.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(force.drag);
+
+        //#region On Mouse Hover
+        var tooltip = d3.select("body")
+          .append("div")
+          .style("position", "absolute")
+          .style("z-index", "10")
+          .style("border", "solid")
+          //.style("visibility", "hidden")
+          .style("background", "#FFFFFF")
+          .style("padding", "5px")
+        //#endregion
+
+        node.append("circle")
+            .attr( "r"   , function(d) {
+              //if (d.u) {
+                return radius(d.size);
+              /*} else {
+                return radius(0);
+              }*/
+            })
+            .style("fill", function(d) { return d.color/*color(d.atom);*/ })
+            .style("stroke-opacity", .2) // set the stroke opacity
+            .on("mouseover", function(d){
+              tooltip.text(d.atom);
+              return tooltip
+              .style("visibility", "visible")
+              .style("background", d.color)
+              ;
+            })
+            .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+            .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
+            .on("click", function(d){
+              document.getElementById("t1").value = d.atom;
+              console.log(d);//`${d}`)
+              colorizeConnections();
+            });
+        let textSize;
+        node.append("text")
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .style("font-weight", 900)
+            .attr("textLength", function(d){
+            // antes todo  doble menos
+              if (d.atom.length > d.size && d.atom.length > 10) {
+                return d.atom.length*4;
+              } else if (d.atom.length <= d.size && d.size > 10) {
+                return d.size*4;
+              } else {
+                return 40;
+              }
+            })
+            .attr("lengthAdjust", "spacing")
+            .style("font", function(d){
+              textSize = Math.max(6,Math.floor(d.size/3))*2; //antes todo sin * 2
+              return textSize+"px times";
+            })
+            .text(function(d) {
+              if (d.size > 0) {
+                return d.atom;
+              } else {
+                //console.log(`elemento omitido: ${d.atom}`)
+                return " ";
+              }
+            });
+
+        function tick() {
+          //#region Set lines and arrow ends on node surface
+          link.selectAll("line")
+            .attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { 
+              return getTargetNodeCircumferencePoint(d)[0];
+            })
+            .attr("y2", function(d) { 
+              return getTargetNodeCircumferencePoint(d)[1];
+            });
+
+          function getTargetNodeCircumferencePoint(d){
+            var t_radius = d.target.size; // size is the custom attribute I calculate during the creation of the nodes depending on the node width
+            var dx = d.target.x - d.source.x;
+            var dy = d.target.y - d.source.y;
+            var gamma = Math.atan2(dy,dx); // Math.atan2 returns the angle in the correct quadrant as opposed to Math.atan
+            var tx = d.target.x - (Math.cos(gamma) * t_radius);
+            var ty = d.target.y - (Math.sin(gamma) * t_radius);
+
+            return [tx,ty]; 
+          }
+          //#endregion
+
+          node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+        }
+
+        try {
+          const voidOption = document.createElement("OPTION");
+          voidOption.innerText = " ";
+          document.getElementById("l1").appendChild(voidOption);
+          let nameKeyReference =  Array.from({length: graph.nodes.length}, (v, i) => i).map(function(i) {
+            return graph["nodes"][i]["atom"];
+          });
+          Array.from({length: graph.nodes.length}, (v, i) => i).map(function(i) {
+            const connectionListOption = document.createElement("OPTION");
+            connectionListOption.innerText = nameKeyReference[i];
+            document.getElementById("l1").appendChild(connectionListOption)
+          });
+        } catch (e) {/*Uninstanced HTML*/}
+
+        //svg.append("svg:defs").selectAll("marker")
+        //  .data([graph.nodes]) // Different link/path types can be defined here
+        //  .enter().append("svg:marker")
+        //  .style("fill", function(d) {
+        //      console.log(d);
+        //      if (d.size === 0) {
+        //          return "#FFFFFF";
+        //      }
+        //    }) // 444444
+        //  ;
+
+      });
+
+      svg.append("svg:defs").selectAll("marker")
+          .data(["end"]) // Different link/path types can be defined here
+          .enter().append("svg:marker") // This section adds in the arrows
+          .attr("id", String)
+          .attr("viewBox", "0 -5 10 10")
+          .attr("refX", 15)
+          .attr("refY", 0.5)
+          .attr("markerWidth",  5) // tamaño de la flecha
+          .attr("markerHeight", 5) // antes 20
+          .attr("orient", "auto")
+          .style("fill", "#CCCCCC")
+          .append("svg:path")
+          .attr("d", "M0,-5L10,0L0,5") //Las habilita
+          ;
+
+    };
+
+    refreshGraph();
+
+    function legendClick(){
+      currentView = parseInt(document.getElementById("currentView").innerText);
+      let date = new Date; date.setTime(Date.now());
+      let h = (date.getHours().toString().length>1?date.getHours():"0"+date.getHours());
+      let m = (date.getMinutes().toString().length>1?date.getMinutes():"0"+date.getMinutes());
+      let s = (date.getSeconds().toString().length>1?date.getSeconds():"0"+date.getSeconds());
+      let time = h+":"+m+":"+s;
+      document.getElementById("logs").innerText = `Mostrando ${document.getElementById(graphList[currentView]).innerText} @ ${time}`;
+      if (currentView === (graphList.length-1)) {
+        currentView = 0;
+      } else {
+        currentView += 1;
+      }
+      refreshGraph(refresh=true);
+      document.getElementById("currentView").innerText = currentView;
+    }
+
+    function showColorDescriptions() {
+      try {
+        const descrs = document.getElementById("descrs");
+        if (JSON.stringify(descrs.style.display) === "\"none\"") {
+          descrs.style = "";
+        } else {
+          descrs.style = "display: none;";
+        }
+      } catch (e) { console.log(e); /*Aún no instanciado*/ }
+    }
+
+    function colorizeConnections() {
+      d3.select("svg").selectAll(".link").selectAll("line")
+        .style("stroke", function(d){
+          if (d.source.atom === document.getElementById("t1").value) {
+            console.log(`------ Next nodes ------`)
+            console.log(`1: ${d.source.atom} -- ${d.target.atom}`);
+            return "#FF0000";
+          }
+          if (d.target.atom === document.getElementById("t1").value) {
+            console.log(`------ Prev nodes ------`)
+            console.log(`1: ${d.source.atom} -- ${d.target.atom}`);
+            return "#FF0000";
+          }
+        });
+      d3.select("svg").selectAll(".node").selectAll("circle")
+        .attr("r", function(d) {
+          if (d.atom === document.getElementById("t1").value) {
+            return radius(d.size+50);
+          } else {
+            return radius(d.size);
+          }
+        })
+        .style("fill", function(d) {
+          if (d.atom === document.getElementById("t1").value) {
+            return "#FF0000";
+          } else {
+            return d.color;
+          }
+        });
+    }
+
+    $("body").keypress(
+      function(event) {
+        if(event.which===13) {
+          colorizeConnections();
+        }
+      }
+    );
+  </script>
+  <div id="legend">
+    <div name="legendControls" class="grid-container-6">
+      <div name="zoomLegend">
+        <img src="./imgs/layout/ctrl-button.png" alt="ctrl-button" width="16px" height="16px"/><img
+          src="./imgs/layout/masmenos-button.png" alt="mas-menos-button" width="16px" height="16px"/><span class="legend-text">
+          Zoom</span>
+      </div>
+      <div name="moveLegend">
+        <img src="./imgs/layout/mousescroll-button.png" alt="mouse-middle-button" width="12px" height="16px"/><span
+          class="legend-text">Move</span>
+      </div>
+      <div name="searchLegend">
+        <img src="./imgs/layout/ctrl-button.png" alt="ctrl-button" width="16px" height="16px"/><img
+          src="./imgs/layout/f-button.png" alt="f-button" width="16px" height="16px"/><span
+          class="legend-text">Search elements</span>
+      </div>
+      <div class="legend-text pt-03-em">Select trace to check</div>
+      <div name="traceSearchBar" class="w10em">
+        <input
+          type="text" id="t1" name="connectionsList" list="l1" style="width: 95%;">
+        <datalist id="l1">
+        </datalist>
+      </div>
+      <div name="schemesSelector" class="w6em" onclick="legendClick()">
+        <div class="navbar" style="width: auto; height: 16px;">
+            <div class="dropdown" style="padding: 0px 0px">
+              <button class="dropbtn pt-03-em" style="height:16px; align-content: center; font-size:smaller">Schemes
+                <i class="fa fa-caret-down"></i>
+              </button>
+              <div class="dropdown-content">
+                <a class="dropdown-1" href="#" id="graphRS"   onclick="setCurrentView(0)">Gráfico de Orígenes en Redshift</a>
+                <a class="dropdown-2" href="#" id="graphI1"   onclick="setCurrentView(1)">Conexiones en el Informe Diario</a>
+                <a class="dropdown-3" href="#" id="graphI1M"  onclick="setCurrentView(2)">Métricas Informe Diario</a>
+                <a class="dropdown-4" href="#" id="graphI1MR" onclick="setCurrentView(3)">Relación métricas Informe Diario</a>
+                <a class="dropdown-5" href="#" id="graphI2"   onclick="setCurrentView(4)">Conexiones en el Informe Mensual</a>
+                <a class="dropdown-6" href="#" id="graphI1y2" onclick="setCurrentView(5)">Relaciones de los informes 1 y 2</a>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div name="legendText" id="descrs" colSpan="10" onclick="showColorDescriptions()">&nbsp;
+        <span id="loss">    Bajas</span>      &nbsp;
+        <span id="geo">     Geogr</span>      &nbsp;
+        <span id="presup">  Presp</span>      &nbsp;
+        <span id="income">  Incom</span>      &nbsp;
+        <span id="paramx">  Param</span>      &nbsp;
+        <span id="calconv"> Vrios</span>      &nbsp;
+        <span id="sapbi">   Festv</span>      &nbsp;
+        <span id="i22">     &nbsp;&nbsp;&nbsp;&nbsp;</span> &nbsp;
+        <span id="i2">      &nbsp;&nbsp;&nbsp;&nbsp;</span> &nbsp;
+        <span id="i21">     &nbsp;&nbsp;&nbsp;&nbsp;</span> &nbsp;
+        <span id="i12">     &nbsp;&nbsp;&nbsp;&nbsp;</span> &nbsp;
+        <span id="i1">      Común</span> &nbsp;
+        <span id="i11">     &nbsp;&nbsp;&nbsp;&nbsp;</span>
+    </div>
+    <div name="legendLogs" id="logs" colSpan="10" onclick="showColorDescriptions()">Mostrando Gráfico de Orígenes en Redshift.
+    </div>
+  </table>
+</body>
+</html>
