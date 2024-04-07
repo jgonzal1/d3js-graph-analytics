@@ -19,7 +19,8 @@
 ![Contributors][contributors-shield]
 [![Stargazers][stars-shield]][stars-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-<img src="https://mirrors.creativecommons.org/presskit/buttons/88x31/svg/by-nc.eu.svg" style="height:1.6em">
+
+<img src="https://mirrors.creativecommons.org/presskit/buttons/88x31/svg/by-nc.eu.svg" alt="Project under Creative Commons BY-NC" style="height:1.6em">
 
 <style>
   img {
@@ -58,14 +59,13 @@
 
 </td></tr></tbody></table>
 
-<img src="imgs/docs/conexion-tablas-redshift-metricas-informe-diario.PNG">
-<img src="imgs/docs/conexiones-informe-diario-m1.PNG">
-<img src="imgs/docs/conexiones-informe-diario-metricas.PNG">
-<img src="imgs/docs/conexiones-informe-diario.PNG">
-<img src="imgs/docs/evidencia-presupuesto-contrataciones-irreducible-todas-tablas-usadas.PNG">
-<img src="imgs/docs/grafico-red-conexion-columnas-todos-datos.PNG">
-<img src="imgs/docs/relaciones-informe-diario.PNG">
-<!---->
+![Conexión tablas redshift métricas informe diario](imgs/docs/conexion-tablas-redshift-metricas-informe-diario.PNG)
+![Conexiones informe diario m1](imgs/docs/conexiones-informe-diario-m1.PNG)
+![Conexiones informe diario métricas](imgs/docs/conexiones-informe-diario-metricas.PNG)
+![Conexiones informe diario](imgs/docs/conexiones-informe-diario.PNG)
+![Evidencia presupuesto contrataciones irreducible todas tablas usadas](imgs/docs/evidencia-presupuesto-contrataciones-irreducible-todas-tablas-usadas.PNG)
+![Gráfico red conexión columnas todos datos](imgs/docs/grafico-red-conexion-columnas-todos-datos.PNG)
+![Relaciones informe diario](imgs/docs/relaciones-informe-diario.PNG)
 
 ## 3. <a name='Usage'></a>Usage
 
