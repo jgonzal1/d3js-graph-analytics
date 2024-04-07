@@ -7,7 +7,7 @@
   <link href="imgs/layout/favicon_64.png" rel="icon" type="image/x-icon" />
   <script src="./libs/jquery-2.1.4.min.js"></script>
   <script src="./libs/d3.v3.min.js"></script>
-  <script src="./data/graphSonata.js"></script>
+  <script src="./data/graphMusic.js"></script>
   <script src="./data/graphRS.Glue.js"></script>
   <script src="./data/graphI1.js"></script>
   <script src="./data/graphI1M.js"></script>
@@ -19,7 +19,7 @@
 <body>
   <div id="currentView">0</div>
   <script>
-    const graphList = ["graphSonata", "graphRS", "graphI1", "graphI1M", "graphI1MR", "graphI2", "graphI1y2"];
+    const graphList = ["graphMusic", "graphRS", "graphI1", "graphI1M", "graphI1MR", "graphI2", "graphI1y2"];
     let currentView = parseInt(document.getElementById("currentView").innerText);
     let dataSource;
     let graph;
@@ -30,8 +30,8 @@
     }
 
     function refreshGraph(refresh = false) {
-      var width = 2400,
-        height = 1350;
+      var width = 4000,
+        height = 3000;
 
       var color = d3.scale.category20b();
 
@@ -61,7 +61,7 @@
             document.getElementById("i1").innerText = "Común";
             document.getElementById("svg").style.display = "";
           } catch (e) {/*No instanciado*/ }
-          getGraphSonata(function (graph) {
+          getGraphMusic(function (graph) {
             callback(graph);
           });
           // } else if (currentView === 0) {
