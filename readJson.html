@@ -6,7 +6,7 @@
   <link href="imgs/layout/favicon_64.png" rel="icon" type="image/x-icon" />
   <script src="./libs/jquery-2.1.4.min.js"></script>
   <script src="./libs/d3.v7.js"></script>
-  <script src="./data/_less/wl_eogg_salgmodel_dim.js"></script>
+  <script src="./data/_less/m_sag2_tmp.js"></script>
 </head>
 
 <body>
@@ -42,7 +42,7 @@
     }
 
     // Compute the graph and start the force simulation.
-    const root = d3.hierarchy(wl_eogg_salgmodel_dim, function (d) {
+    const root = d3.hierarchy(m_sag2_tmp, function (d) {
       if (d && typeof d == "object") {
         return Object.keys(d).map(k => { return d[k]; });
       }
@@ -52,7 +52,7 @@
 
     const simulation = d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).id(d => d.id).distance(0).strength(1))
-      .force("charge", d3.forceManyBody().strength(-50))
+      .force("charge", d3.forceManyBody().strength(-5)) // -50
       .force("x", d3.forceX())
       .force("y", d3.forceY());
 
@@ -84,7 +84,6 @@
       .attr("r", 3.5)
       .text(d => {
         if (d.data && typeof (d.data) === "string") {
-          console.log(d.data)
           return d.data;
         }
         return;
