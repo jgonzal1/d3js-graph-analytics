@@ -9,16 +9,116 @@
     label {
       margin-right: 0.2em;
     }
+
+    .on-top {
+      position: absolute;
+      top: 0.5em;
+      left: 5.5em;
+      z-index: 1;
+    }
+
+    .w3em {
+      width: 2.8em
+    }
   </style>
+
   <script src="./libs/jquery-2.1.4.min.js"></script>
   <script src="./libs/d3.v7.js"></script>
+  <script src="./assets/renderCollapsibleTree.js"></script>
+
+  <script src="./data/_less/bas_eogg_wf_eogg.js"></script>
+  <script src="./data/_less/cmd_kun_PRS_PRD.js"></script>
+  <script src="./data/_less/dmsa_sag_wf_eogg.js"></script>
+  <script src="./data/_less/m_check_python_log.js"></script>
+  <script src="./data/_less/m_dan_cmd_files.js"></script>
+  <script src="./data/_less/m_eogg_begrundelse_dim.js"></script>
+  <script src="./data/_less/m_eogg_databro.js"></script>
+  <script src="./data/_less/m_eogg_databro_dokument.js"></script>
+  <script src="./data/_less/m_eogg_databro_kre.js"></script>
+  <script src="./data/_less/m_eogg_dato_dim.js"></script>
+  <script src="./data/_less/m_eogg_mail_databro_count.js"></script>
+  <script src="./data/_less/m_eogg_opgafdelinger_dim.js"></script>
+  <script src="./data/_less/m_eogg_opgave_sagsbehandler_dim.js"></script>
+  <script src="./data/_less/m_eogg_opgave_status_dim.js"></script>
+  <script src="./data/_less/m_eogg_opgave2_dim.js"></script>
+  <script src="./data/_less/m_eogg_opgaver_pr_ejendom_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_dokument_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_dokument_emneord_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_emneord_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_sagsrelation_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_sagsrelation_vurderingsaar_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_vurderingsaar_dim.js"></script>
+  <script src="./data/_less/m_eogg_sagsbehandler_dim.js"></script>
+  <script src="./data/_less/m_eogg_salgetinglysning_dim.js"></script>
+  <script src="./data/_less/m_eogg_salgmodel_dim.js"></script>
+  <script src="./data/_less/m_eogg_styringskode_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_ejer_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_gyldige_breve_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_gyldige_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_gyldige_historicalyears_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_gyldige_historicalyearsevs_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_klager_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_styringskoder_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_vurderingsaar_eligible_grundskyld_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_calc_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_delvurdering_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_fact.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_tilned_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_vp_forhold_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurderingsejendom_dim.js"></script>
+  <script src="./data/_less/m_flat_scope.js"></script>
+  <script src="./data/_less/m_manifest_tmp.js"></script>
+  <script src="./data/_less/m_opgafdelinger_tmp.js"></script>
+  <script src="./data/_less/m_opgave.js"></script>
+  <script src="./data/_less/m_opgave_og_begrundelse_tmp.js"></script>
+  <script src="./data/_less/m_sag2_tmp.js"></script>
+  <script src="./data/_less/m_salgetinglysning_tmp.js"></script>
+  <script src="./data/_less/m_salgmodel_tmp.js"></script>
+  <script src="./data/_less/m_styringskoder_tmp.js"></script>
+  <script src="./data/_less/m_tilbagebetaling_tmp.js"></script>
+  <script src="./data/_less/m_vurdering_tmp.js"></script>
+  <script src="./data/_less/m_vurderingsejendom_tmp.js"></script>
+  <script src="./data/_less/manifest.js"></script>
+  <script src="./data/_less/s_m_check_python_log.js"></script>
+  <script src="./data/_less/wf_eogg_hent_fra_s3.js"></script>
+  <script src="./data/_less/wl_eogg_date_dim.js"></script>
+  <script src="./data/_less/wl_eogg_fact.js"></script>
+  <script src="./data/_less/wl_eogg_opgave_dim.js"></script>
+  <script src="./data/_less/wl_eogg_restart.js"></script>
+  <script src="./data/_less/wl_eogg_sag2_dim.js"></script>
+  <script src="./data/_less/wl_eogg_salgetinglysning_dim.js"></script>
   <script src="./data/_less/wl_eogg_salgmodel_dim.js"></script>
+  <script src="./data/_less/wl_eogg_tilbagebetaling_dim.js"></script>
+  <script src="./data/_less/wl_eogg_vurdering_dim.js"></script>
+  <script src="./data/_less/wl_eogg_vurderingsejendom_dim.js"></script>
+  <script src="./data/_less/wl_manifest_tmp1.js"></script>
+  <script src="./data/_less/wl_opgafdelinger_tmp.js"></script>
+  <script src="./data/_less/wl_opgave_og_begrundelse_tmp.js"></script>
+  <script src="./data/_less/wl_sag2_tmp.js"></script>
+  <script src="./data/_less/wl_salgetinglysning_tmp.js"></script>
+  <script src="./data/_less/wl_salgmodel_tmp.js"></script>
+  <script src="./data/_less/wl_styringskoder_tmp.js"></script>
+  <script src="./data/_less/wl_tilbagebetaling_tmp.js"></script>
+  <script src="./data/_less/wl_vurdering_tmp.js"></script>
+  <script src="./data/_less/wl_vurderingsejendom_tmp.js"></script>
+  <!--<script src="./data/_less/manifest-file-schema_v1.0.0.js"></script>
+  <script src="./data/_less/opgafdelinger_v1.0.2.js"></script>
+  <script src="./data/_less/opgave_v2.0.1.js"></script>
+  <script src="./data/_less/sag2_v2.0.0.js"></script>
+  <script src="./data/_less/salgetinglysning_v1.0.1.js"></script>
+  <script src="./data/_less/salgmodel_v1.0.0.js"></script>
+  <script src="./data/_less/styringskoder_v1.0.0.js"></script>
+  <script src="./data/_less/tilbagebetaling_v4.0.0.js"></script>
+  <script src="./data/_less/vurdering_v2.1.2.js"></script>
+  <script src="./data/_less/vurderingsejendom_v2.0.0.js"></script>-->
 </head>
 
 <body>
-  <label for="dy">dy</label>
-  <input id="dy" type="number" min="50" max="300" step="10" value="200" disabled></input>
-  <button onClick="expandAll()">Expand all</button><button onClick="collapseAll()">Collapse all</button>
+  <label for="dx">dx</label>
+  <input id="dx" class="w3em" disabled type="number" min="50" max="300" step="10" value="200"></input>
   <svg id="svgPlaceholder" width="4000" height="9999"></svg>
   <script type="text/javascript">
     // Specify the chart’s dimensions.
@@ -28,178 +128,88 @@
     const marginRight = 5;
     const marginBottom = 10;
     const marginLeft = 10;
+    let dx = document.getElementById("dx").value;
+    let svgNode = renderCollapsibleTree(m_flat_scope, height, width, d_x = dx);
+    document.getElementById("svgPlaceholder").appendChild(svgNode);
 
-    // Rows are separated by dx pixels, columns by dy pixels. These names can be counter-intuitive
-    // (dx is a height, and dy a width). This because the tree must be viewed with the root at the
-    // “bottom”, in the data domain. The width of a column is based on the tree’s height.
-    const root = d3.hierarchy(wl_eogg_salgmodel_dim, function (d) {
-      if (d && typeof d == "object") {
-        return Object.keys(d).map(k => { return d[k]; });
-      }
-    });
-    const dx = 10;
-    const dy = document.getElementById("dy").value; // (width - marginRight - marginLeft) / (1 + root.height);
-
-    // Define the tree layout and the shape for links.
-    const tree = d3.tree().nodeSize([dx, dy]);
-    const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
-
-    // Create the SVG container, a layer for the links and a layer for the nodes.
-    const svg = d3.create("svg")
-      .attr("width", width)
-      .attr("height", dx)
-      .attr("viewBox", [-marginLeft, -marginTop, width, dx])
-      .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif; user-select: none;");
-
-    const gLink = svg.append("g")
-      .attr("fill", "none")
-      .attr("stroke", "#555")
-      .attr("stroke-opacity", 0.4)
-      .attr("stroke-width", 1.5);
-
-    const gNode = svg.append("g")
-      .attr("cursor", "pointer")
-      .attr("pointer-events", "all");
-
-    function update(event, source) {
-      const duration = event?.altKey ? 2500 : 250; // hold the alt key to slow down the transition
-      const nodes = root.descendants().reverse();
-      const links = root.links();
-
-      // Compute the new tree layout.
-      tree(root);
-
-      let left = root;
-      let right = root;
-      root.eachBefore(node => {
-        if (node.x < left.x) left = node;
-        if (node.x > right.x) right = node;
-      });
-
-      const height = right.x - left.x + marginTop + marginBottom;
-
-      const transition = svg.transition()
-        .duration(duration)
-        .attr("height", height)
-        .attr("viewBox", [-marginLeft, left.x - marginTop, width, height])
-        .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
-
-      // Update the nodes…
-      const node = gNode.selectAll("g")
-        .data(nodes, d => d.id);
-
-      // Enter any new nodes at the parent's previous position.
-      const nodeEnter = node.enter().append("g")
-        .attr("transform", d => source && `translate(${source.y0},${source.x0})`)
-        .attr("fill-opacity", 0)
-        .attr("stroke-opacity", 0)
-        .on("click", (event, d) => {
-          d.children = d.children ? null : d._children;
-          update(event, d);
-        });
-
-      nodeEnter.append("circle")
-        .attr("r", 2.5)
-        .attr("fill", d => d._children ? "#555" : "#999")
-        .attr("stroke-width", 10);
-
-      nodeEnter.append("text")
-        .attr("dy", "0.31em")
-        .attr("x", d => d._children ? -6 : 6)
-        .attr("text-anchor", d => d._children ? "end" : "start")
-        .text(d => {
-          if (d.data && typeof (d.data) === "string") {
-            return d.data;
-          }
-          return;
-        })
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-width", 3)
-        .attr("stroke", "white")
-        .attr("paint-order", "stroke");
-
-      // Transition nodes to their new position.
-      const nodeUpdate = node.merge(nodeEnter).transition(transition)
-        .attr("transform", d => `translate(${d.y},${d.x})`)
-        .attr("fill-opacity", 1)
-        .attr("stroke-opacity", 1);
-
-      // Transition exiting nodes to the parent's new position.
-      const nodeExit = node.exit().transition(transition).remove()
-        .attr("transform", d => `translate(${source.y},${source.x})`)
-        .attr("fill-opacity", 0)
-        .attr("stroke-opacity", 0);
-
-      // Update the links…
-      const link = gLink.selectAll("path")
-        .data(links, d => d.target.id);
-
-      // Enter any new links at the parent's previous position.
-      const linkEnter = link.enter().append("path")
-        .attr("d", d => {
-          if (source) {
-            const o = { x: source.x0, y: source.y0 };
-            return diagonal({ source: o, target: o });
-          }
-          return;
-        });
-
-      // Transition links to their new position.
-      link.merge(linkEnter).transition(transition)
-        .attr("d", diagonal);
-
-      // Transition exiting nodes to the parent's new position.
-      link.exit().transition(transition).remove()
-        .attr("d", d => {
-          const o = { x: source.x, y: source.y };
-          return diagonal({ source: o, target: o });
-        });
-
-      // Stash the old positions for transition.
-      root.eachBefore(d => {
-        d.x0 = d.x;
-        d.y0 = d.y;
-      });
+    function changeSource(source_str) {
+      document.getElementById("svgPlaceholder").innerHTML = "";
+      dx = document.getElementById("dx").value;
+      svgNode = renderCollapsibleTree(eval(source_str), height, width, d_x = dx);
+      document.getElementById("svgPlaceholder").appendChild(svgNode);
     }
+  </script>
+  <div class="on-top">
+    <label for="source">source</label>
+    <select id="source" onchange="changeSource(Array.from(this.children).filter(v => v.selected)[0].value)">
+      <option value="m_flat_scope">m_flat_scope</option>
+    </select>
+  </div>
+  <script>
+    const files = [
 
-    // Do the first update to the initial configuration of the tree — where a number of nodes
-    // are open (arbitrarily selected as the root, plus nodes with 7 letters).
-    root.x0 = dy / 2;
-    root.y0 = 0;
-    root.descendants().forEach((d, i) => {
-      d.id = i;
-      d._children = d.children;
-      if (d && d.depth && (d?.data?.name?.length ?? 0) !== 7) {
-        d.children = null
-      }
-    });
+      "m_flat_scope",
+      "m_eogg_mail_databro_count",
+      "s_m_check_python_log",
+      "m_eogg_dato_dim",
+      "m_eogg_opgaver_pr_ejendom_dim",
+      "wl_eogg_date_dim",
+      "wl_eogg_salgmodel_dim",
+      "wl_eogg_salgetinglysning_dim",
+      "m_check_python_log",
+      "m_eogg_opgafdelinger_dim",
+      "wl_eogg_vurderingsejendom_dim",
+      "wl_salgmodel_tmp",
+      "wl_opgafdelinger_tmp",
+      "wl_salgetinglysning_tmp",
+      "wl_styringskoder_tmp",
+      "wl_opgave_og_begrundelse_tmp",
+      "m_eogg_salgmodel_dim",
+      "wl_manifest_tmp1",
+      "m_eogg_salgetinglysning_dim",
+      "wl_vurdering_tmp",
+      "wl_vurderingsejendom_tmp"
 
-    update(null, root);
+      // "bas_eogg_wf_eogg", "cmd_kun_PRS_PRD", "dmsa_sag_wf_eogg", "m_check_python_log",
+      // "m_dan_cmd_files", "m_eogg_begrundelse_dim", "m_eogg_databro", "m_eogg_databro_dokument",
+      // "m_eogg_databro_kre", "m_eogg_dato_dim", "m_eogg_mail_databro_count",
+      // "m_eogg_opgafdelinger_dim", "m_eogg_opgave_sagsbehandler_dim", "m_eogg_opgave_status_dim",
+      // "m_eogg_opgave2_dim", "m_eogg_opgaver_pr_ejendom_dim", "m_eogg_sag2_dim",
+      // "m_eogg_sag2_dokument_dim", "m_eogg_sag2_dokument_emneord_dim", "m_eogg_sag2_emneord_dim",
+      // "m_eogg_sag2_sagsrelation_dim", "m_eogg_sag2_sagsrelation_vurderingsaar_dim",
+      // "m_eogg_sag2_vurderingsaar_dim", "m_eogg_sagsbehandler_dim", "m_eogg_salgetinglysning_dim",
+      // "m_eogg_salgmodel_dim", "m_eogg_styringskode_dim", "m_eogg_tilbagebetaling_dim",
+      // "m_eogg_tilbagebetaling_ejer_dim", "m_eogg_tilbagebetaling_gyldige_breve_dim",
+      // "m_eogg_tilbagebetaling_gyldige_dim", "m_eogg_tilbagebetaling_gyldige_historicalyears_dim",
+      // "m_eogg_tilbagebetaling_gyldige_historicalyearsevs_dim", "m_eogg_tilbagebetaling_klager_dim",
+      // "m_eogg_tilbagebetaling_styringskoder_dim",
+      // "m_eogg_tilbagebetaling_vurderingsaar_eligible_grundskyld_dim", "m_eogg_vurdering_calc_dim",
+      // "m_eogg_vurdering_delvurdering_dim", "m_eogg_vurdering_dim", "m_eogg_vurdering_fact",
+      // "m_eogg_vurdering_tilned_dim", "m_eogg_vurdering_vp_forhold_dim",
+      // "m_eogg_vurderingsejendom_dim", "m_manifest_tmp", "m_opgafdelinger_tmp",
+      // "m_opgave", "m_opgave_og_begrundelse_tmp", "m_sag2_tmp", "m_salgetinglysning_tmp",
+      // "m_salgmodel_tmp", "m_styringskoder_tmp", "m_tilbagebetaling_tmp", "m_vurdering_tmp",
+      // "m_vurderingsejendom_tmp", "manifest",
 
-    document.getElementById("svgPlaceholder").appendChild(svg.node()); // Object.assign(svg.node())
+      // // "manifest-file-schema_v1.0.0", "opgafdelinger_v1.0.2",
+      // // "opgave_v2.0.1", "s_m_check_python_log", "sag2_v2.0.0", "salgetinglysning_v1.0.1",
+      // // "salgmodel_v1.0.0", "styringskoder_v1.0.0", "tilbagebetaling_v4.0.0", "vurdering_v2.1.2",
+      // // "vurderingsejendom_v2.0.0",
 
-    function expand(d) {
-      if (d._children) {
-        d.children = d._children;
-        d._children = null;
-      }
-      var children = (d.children) ? d.children : d._children;
-      if (children)
-        children.forEach(expand);
-    }
-
-    function expandAll() {
-      expand(root);
-      update(root);
-    }
-
-    function collapseAll() {
-      root.children.forEach(collapse);
-      collapse(root);
-      update(root);
-    }
-
-    expandAll()
+      // "wf_eogg_hent_fra_s3", "wl_eogg_date_dim", "wl_eogg_fact",
+      // "wl_eogg_opgave_dim", "wl_eogg_restart", "wl_eogg_sag2_dim", "wl_eogg_salgetinglysning_dim",
+      // "wl_eogg_salgmodel_dim", "wl_eogg_tilbagebetaling_dim", "wl_eogg_vurdering_dim",
+      // "wl_eogg_vurderingsejendom_dim", "wl_manifest_tmp1", "wl_opgafdelinger_tmp",
+      // "wl_opgave_og_begrundelse_tmp", "wl_sag2_tmp", "wl_salgetinglysning_tmp", "wl_salgmodel_tmp",
+      // "wl_styringskoder_tmp", "wl_tilbagebetaling_tmp", "wl_vurdering_tmp", "wl_vurderingsejendom_tmp"
+    ];
+    const select = document.getElementById("source");
+    files.map(f => {
+      o = document.createElement("option");
+      o.value = f;
+      o.innerText = f;
+      select.appendChild(o);
+    })
   </script>
 </body>
 
