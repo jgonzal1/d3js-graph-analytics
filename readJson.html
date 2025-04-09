@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>D3.JS graph</title>
+  <link href="imgs/layout/favicon_64.png" rel="icon" type="image/x-icon" />
+  <style>
+    button,
+    label {
+      margin-right: 0.2em;
+    }
+
+    .on-top {
+      position: absolute;
+      top: 0.5em;
+      left: 5.5em;
+      z-index: 1;
+    }
+
+    .w3em {
+      width: 2.8em
+    }
+  </style>
+
+  <script src="./libs/jquery-2.1.4.min.js"></script>
+  <script src="./libs/d3.v7.js"></script>
+  <script src="./assets/renderCollapsibleTree.js"></script>
+
+  <script src="./data/_less/bas_eogg_wf_eogg.js"></script>
+  <script src="./data/_less/cmd_kun_PRS_PRD.js"></script>
+  <script src="./data/_less/dmsa_sag_wf_eogg.js"></script>
+  <script src="./data/_less/m_check_python_log.js"></script>
+  <script src="./data/_less/m_dan_cmd_files.js"></script>
+  <script src="./data/_less/m_eogg_begrundelse_dim.js"></script>
+  <script src="./data/_less/m_eogg_databro.js"></script>
+  <script src="./data/_less/m_eogg_databro_dokument.js"></script>
+  <script src="./data/_less/m_eogg_databro_kre.js"></script>
+  <script src="./data/_less/m_eogg_dato_dim.js"></script>
+  <script src="./data/_less/m_eogg_mail_databro_count.js"></script>
+  <script src="./data/_less/m_eogg_opgafdelinger_dim.js"></script>
+  <script src="./data/_less/m_eogg_opgave_sagsbehandler_dim.js"></script>
+  <script src="./data/_less/m_eogg_opgave_status_dim.js"></script>
+  <script src="./data/_less/m_eogg_opgave2_dim.js"></script>
+  <script src="./data/_less/m_eogg_opgaver_pr_ejendom_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_dokument_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_dokument_emneord_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_emneord_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_sagsrelation_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_sagsrelation_vurderingsaar_dim.js"></script>
+  <script src="./data/_less/m_eogg_sag2_vurderingsaar_dim.js"></script>
+  <script src="./data/_less/m_eogg_sagsbehandler_dim.js"></script>
+  <script src="./data/_less/m_eogg_salgetinglysning_dim.js"></script>
+  <script src="./data/_less/m_eogg_salgmodel_dim.js"></script>
+  <script src="./data/_less/m_eogg_styringskode_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_ejer_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_gyldige_breve_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_gyldige_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_gyldige_historicalyears_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_gyldige_historicalyearsevs_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_klager_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_styringskoder_dim.js"></script>
+  <script src="./data/_less/m_eogg_tilbagebetaling_vurderingsaar_eligible_grundskyld_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_calc_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_delvurdering_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_fact.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_tilned_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurdering_vp_forhold_dim.js"></script>
+  <script src="./data/_less/m_eogg_vurderingsejendom_dim.js"></script>
+  <script src="./data/_less/m_flat_scope.js"></script>
+  <script src="./data/_less/m_manifest_tmp.js"></script>
+  <script src="./data/_less/m_opgafdelinger_tmp.js"></script>
+  <script src="./data/_less/m_opgave.js"></script>
+  <script src="./data/_less/m_opgave_og_begrundelse_tmp.js"></script>
+  <script src="./data/_less/m_sag2_tmp.js"></script>
+  <script src="./data/_less/m_salgetinglysning_tmp.js"></script>
+  <script src="./data/_less/m_salgmodel_tmp.js"></script>
+  <script src="./data/_less/m_styringskoder_tmp.js"></script>
+  <script src="./data/_less/m_tilbagebetaling_tmp.js"></script>
+  <script src="./data/_less/m_vurdering_tmp.js"></script>
+  <script src="./data/_less/m_vurderingsejendom_tmp.js"></script>
+  <script src="./data/_less/manifest.js"></script>
+  <script src="./data/_less/s_m_check_python_log.js"></script>
+  <script src="./data/_less/wf_eogg_hent_fra_s3.js"></script>
+  <script src="./data/_less/wl_eogg_date_dim.js"></script>
+  <script src="./data/_less/wl_eogg_fact.js"></script>
+  <script src="./data/_less/wl_eogg_opgave_dim.js"></script>
+  <script src="./data/_less/wl_eogg_restart.js"></script>
+  <script src="./data/_less/wl_eogg_sag2_dim.js"></script>
+  <script src="./data/_less/wl_eogg_salgetinglysning_dim.js"></script>
+  <script src="./data/_less/wl_eogg_salgmodel_dim.js"></script>
+  <script src="./data/_less/wl_eogg_tilbagebetaling_dim.js"></script>
+  <script src="./data/_less/wl_eogg_vurdering_dim.js"></script>
+  <script src="./data/_less/wl_eogg_vurderingsejendom_dim.js"></script>
+  <script src="./data/_less/wl_manifest_tmp1.js"></script>
+  <script src="./data/_less/wl_opgafdelinger_tmp.js"></script>
+  <script src="./data/_less/wl_opgave_og_begrundelse_tmp.js"></script>
+  <script src="./data/_less/wl_sag2_tmp.js"></script>
+  <script src="./data/_less/wl_salgetinglysning_tmp.js"></script>
+  <script src="./data/_less/wl_salgmodel_tmp.js"></script>
+  <script src="./data/_less/wl_styringskoder_tmp.js"></script>
+  <script src="./data/_less/wl_tilbagebetaling_tmp.js"></script>
+  <script src="./data/_less/wl_vurdering_tmp.js"></script>
+  <script src="./data/_less/wl_vurderingsejendom_tmp.js"></script>
+  <!--<script src="./data/_less/manifest-file-schema_v1.0.0.js"></script>
+  <script src="./data/_less/opgafdelinger_v1.0.2.js"></script>
+  <script src="./data/_less/opgave_v2.0.1.js"></script>
+  <script src="./data/_less/sag2_v2.0.0.js"></script>
+  <script src="./data/_less/salgetinglysning_v1.0.1.js"></script>
+  <script src="./data/_less/salgmodel_v1.0.0.js"></script>
+  <script src="./data/_less/styringskoder_v1.0.0.js"></script>
+  <script src="./data/_less/tilbagebetaling_v4.0.0.js"></script>
+  <script src="./data/_less/vurdering_v2.1.2.js"></script>
+  <script src="./data/_less/vurderingsejendom_v2.0.0.js"></script>-->
+</head>
+
+<body>
+  <label for="dx">dx</label>
+  <input id="dx" class="w3em" type="number" min="50" max="300" step="10" value="200"></input>
+  <svg id="svgPlaceholder" width="4000" height="9999"></svg>
+  <script type="text/javascript">
+    // Specify the chart’s dimensions.
+    const width = 4000;
+    const height = 9999;
+    const marginTop = 10;
+    const marginRight = 5;
+    const marginBottom = 10;
+    const marginLeft = 10;
+    let dx = document.getElementById("dx").value;
+    let svgNode = renderCollapsibleTree(m_flat_scope, height, width, d_x = dx);
+    document.getElementById("svgPlaceholder").appendChild(svgNode);
+
+    function changeSource(source_str) {
+      document.getElementById("svgPlaceholder").innerHTML = "";
+      dx = document.getElementById("dx").value;
+      svgNode = renderCollapsibleTree(eval(source_str), height, width, d_x = dx);
+      document.getElementById("svgPlaceholder").appendChild(svgNode);
+    }
+  </script>
+  <div class="on-top">
+    <label for="source">source</label>
+    <select id="source" onchange="changeSource(Array.from(this.children).filter(v => v.selected)[0].value)">
+      <option value="m_flat_scope">m_flat_scope</option>
+    </select>
+  </div>
+  <script>
+    const files = [
+      "bas_eogg_wf_eogg",
+      "cmd_kun_PRS_PRD",
+      "dmsa_sag_wf_eogg",
+      "m_check_python_log",
+      "m_dan_cmd_files",
+      "m_eogg_begrundelse_dim",
+      "m_eogg_databro",
+      "m_eogg_databro_dokument",
+      "m_eogg_databro_kre",
+      "m_eogg_dato_dim",
+      "m_eogg_mail_databro_count",
+      "m_eogg_opgafdelinger_dim",
+      "m_eogg_opgave_sagsbehandler_dim",
+      "m_eogg_opgave_status_dim",
+      "m_eogg_opgave2_dim",
+      "m_eogg_opgaver_pr_ejendom_dim",
+      "m_eogg_sag2_dim",
+      "m_eogg_sag2_dokument_dim",
+      "m_eogg_sag2_dokument_emneord_dim",
+      "m_eogg_sag2_emneord_dim",
+      "m_eogg_sag2_sagsrelation_dim",
+      "m_eogg_sag2_sagsrelation_vurderingsaar_dim",
+      "m_eogg_sag2_vurderingsaar_dim",
+      "m_eogg_sagsbehandler_dim",
+      "m_eogg_salgetinglysning_dim",
+      "m_eogg_salgmodel_dim",
+      "m_eogg_styringskode_dim",
+      "m_eogg_tilbagebetaling_dim",
+      "m_eogg_tilbagebetaling_ejer_dim",
+      "m_eogg_tilbagebetaling_gyldige_breve_dim",
+      "m_eogg_tilbagebetaling_gyldige_dim",
+      "m_eogg_tilbagebetaling_gyldige_historicalyears_dim",
+      "m_eogg_tilbagebetaling_gyldige_historicalyearsevs_dim",
+      "m_eogg_tilbagebetaling_klager_dim",
+      "m_eogg_tilbagebetaling_styringskoder_dim",
+      "m_eogg_tilbagebetaling_vurderingsaar_eligible_grundskyld_dim",
+      "m_eogg_vurdering_calc_dim",
+      "m_eogg_vurdering_delvurdering_dim",
+      "m_eogg_vurdering_dim",
+      "m_eogg_vurdering_fact",
+      "m_eogg_vurdering_tilned_dim",
+      "m_eogg_vurdering_vp_forhold_dim",
+      "m_eogg_vurderingsejendom_dim",
+      "m_manifest_tmp",
+      "m_opgafdelinger_tmp",
+      "m_opgave",
+      "m_opgave_og_begrundelse_tmp",
+      "m_sag2_tmp",
+      "m_salgetinglysning_tmp",
+      "m_salgmodel_tmp",
+      "m_styringskoder_tmp",
+      "m_tilbagebetaling_tmp",
+      "m_vurdering_tmp",
+      "m_vurderingsejendom_tmp",
+      "manifest",
+      "s_m_check_python_log",
+      "wf_eogg_hent_fra_s3",
+      "wl_eogg_date_dim",
+      "wl_eogg_fact",
+      "wl_eogg_opgave_dim",
+      "wl_eogg_restart",
+      "wl_eogg_sag2_dim",
+      "wl_eogg_salgetinglysning_dim",
+      "wl_eogg_salgmodel_dim",
+      "wl_eogg_tilbagebetaling_dim",
+      "wl_eogg_vurdering_dim",
+      "wl_eogg_vurderingsejendom_dim",
+      "wl_manifest_tmp1",
+      "wl_opgafdelinger_tmp",
+      "wl_opgave_og_begrundelse_tmp",
+      "wl_sag2_tmp",
+      "wl_salgetinglysning_tmp",
+      "wl_salgmodel_tmp",
+      "wl_styringskoder_tmp",
+      "wl_tilbagebetaling_tmp",
+      "wl_vurdering_tmp",
+      "wl_vurderingsejendom_tmp"
+
+      // "bas_eogg_wf_eogg", "cmd_kun_PRS_PRD", "dmsa_sag_wf_eogg", "m_check_python_log",
+      // "m_dan_cmd_files", "m_eogg_begrundelse_dim", "m_eogg_databro", "m_eogg_databro_dokument",
+      // "m_eogg_databro_kre", "m_eogg_dato_dim", "m_eogg_mail_databro_count",
+      // "m_eogg_opgafdelinger_dim", "m_eogg_opgave_sagsbehandler_dim", "m_eogg_opgave_status_dim",
+      // "m_eogg_opgave2_dim", "m_eogg_opgaver_pr_ejendom_dim", "m_eogg_sag2_dim",
+      // "m_eogg_sag2_dokument_dim", "m_eogg_sag2_dokument_emneord_dim", "m_eogg_sag2_emneord_dim",
+      // "m_eogg_sag2_sagsrelation_dim", "m_eogg_sag2_sagsrelation_vurderingsaar_dim",
+      // "m_eogg_sag2_vurderingsaar_dim", "m_eogg_sagsbehandler_dim", "m_eogg_salgetinglysning_dim",
+      // "m_eogg_salgmodel_dim", "m_eogg_styringskode_dim", "m_eogg_tilbagebetaling_dim",
+      // "m_eogg_tilbagebetaling_ejer_dim", "m_eogg_tilbagebetaling_gyldige_breve_dim",
+      // "m_eogg_tilbagebetaling_gyldige_dim", "m_eogg_tilbagebetaling_gyldige_historicalyears_dim",
+      // "m_eogg_tilbagebetaling_gyldige_historicalyearsevs_dim", "m_eogg_tilbagebetaling_klager_dim",
+      // "m_eogg_tilbagebetaling_styringskoder_dim",
+      // "m_eogg_tilbagebetaling_vurderingsaar_eligible_grundskyld_dim", "m_eogg_vurdering_calc_dim",
+      // "m_eogg_vurdering_delvurdering_dim", "m_eogg_vurdering_dim", "m_eogg_vurdering_fact",
+      // "m_eogg_vurdering_tilned_dim", "m_eogg_vurdering_vp_forhold_dim",
+      // "m_eogg_vurderingsejendom_dim", "m_manifest_tmp", "m_opgafdelinger_tmp",
+      // "m_opgave", "m_opgave_og_begrundelse_tmp", "m_sag2_tmp", "m_salgetinglysning_tmp",
+      // "m_salgmodel_tmp", "m_styringskoder_tmp", "m_tilbagebetaling_tmp", "m_vurdering_tmp",
+      // "m_vurderingsejendom_tmp", "manifest",
+
+      // // "manifest-file-schema_v1.0.0", "opgafdelinger_v1.0.2",
+      // // "opgave_v2.0.1", "s_m_check_python_log", "sag2_v2.0.0", "salgetinglysning_v1.0.1",
+      // // "salgmodel_v1.0.0", "styringskoder_v1.0.0", "tilbagebetaling_v4.0.0", "vurdering_v2.1.2",
+      // // "vurderingsejendom_v2.0.0",
+
+      // "wf_eogg_hent_fra_s3", "wl_eogg_date_dim", "wl_eogg_fact",
+      // "wl_eogg_opgave_dim", "wl_eogg_restart", "wl_eogg_sag2_dim", "wl_eogg_salgetinglysning_dim",
+      // "wl_eogg_salgmodel_dim", "wl_eogg_tilbagebetaling_dim", "wl_eogg_vurdering_dim",
+      // "wl_eogg_vurderingsejendom_dim", "wl_manifest_tmp1", "wl_opgafdelinger_tmp",
+      // "wl_opgave_og_begrundelse_tmp", "wl_sag2_tmp", "wl_salgetinglysning_tmp", "wl_salgmodel_tmp",
+      // "wl_styringskoder_tmp", "wl_tilbagebetaling_tmp", "wl_vurdering_tmp", "wl_vurderingsejendom_tmp"
+    ];
+    const select = document.getElementById("source");
+    files.map(f => {
+      o = document.createElement("option");
+      o.value = f;
+      o.innerText = f;
+      select.appendChild(o);
+    })
+  </script>
+</body>
+
+</html>
