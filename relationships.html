@@ -7,7 +7,7 @@
   <link href="imgs/layout/favicon_64.png" rel="icon" type="image/x-icon" />
   <script src="./libs/jquery-2.1.4.min.js"></script>
   <script src="./libs/d3.v3.min.js"></script>
-  <script src="./data/old/graph1525.js"></script>
+  <script src="./data/old/graph5056.js"></script>
   <script src="./data/old/graphMusic.js"></script>
   <script src="./data/old/graphRS.Glue.js"></script>
   <script src="./data/old/graphI1.js"></script>
@@ -20,7 +20,7 @@
 <body>
   <div id="currentView">0</div>
   <script>
-    const graphList = ["graph1525", "graphMusic", "graphRS", "graphI1", "graphI1M", "graphI1MR", "graphI2", "graphI1y2"];
+    const graphList = ["graph5056", "graphMusic", "graphRS", "graphI1", "graphI1M", "graphI1MR", "graphI2", "graphI1y2"];
     let currentView = parseInt(document.getElementById("currentView").innerText);
     let dataSource;
     let graph;
@@ -103,7 +103,7 @@
             document.getElementById("i1").innerText = "Común";
             document.getElementById("svg").style.display = "";
           } catch (e) {/*No instanciado*/ }
-          getGraph1525(function (graph) {
+          getGraph5056(function (graph) {
             callback(graph);
           });
           // } else if (currentView === 0) {
@@ -248,7 +248,7 @@
           })
           .attr("lengthAdjust", "spacing")
           .style("font", function (d) {
-            textSize = Math.max(6, Math.floor((d?.size??1) / 3)) * 2; //antes todo sin * 2
+            textSize = Math.max(5, Math.floor((d?.size??1) / 3)) * 2; //antes todo sin * 2
             return textSize + "px times";
           })
           .text(function (d) {
@@ -430,7 +430,7 @@
               <i class="fa fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
-              <a class="dropdown-1" href="#" id="graph1525" onclick="setCurrentView(0)">0</a>
+              <a class="dropdown-1" href="#" id="graph5056" onclick="setCurrentView(0)">0</a>
               <a class="dropdown-1" href="#" id="graphRS" onclick="setCurrentView(1)">1</a>
               <a class="dropdown-2" href="#" id="graphI1" onclick="setCurrentView(2)">2</a>
               <a class="dropdown-3" href="#" id="graphI1M" onclick="setCurrentView(3)">3</a>
