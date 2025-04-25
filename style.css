@@ -1,162 +1,244 @@
-body { background-color: black; color: white; }
+body {
+  background-color: black;
+  color: white;
+}
+
 /*#region D3*/
-  .link line {
-    stroke: #696969;
-  }
-  .link line.separator {
-    stroke: #FFFFFF;
-    stroke-width: 2px;
-  }
-  path.link {
-    fill: #CCCCCC;
-    stroke: #333333;
-    stroke-width: 1.5px;
-  }
-  .node circle {
-    stroke: #000000;
-    stroke-width: 1.5px;
-  }
-  .node text {
-    font: 0.8em sans-serif;
-    pointer-events: none;
-  }
-  #currentView {
-    color: #FFF;
-  }
+.link line {
+  stroke: #696969;
+}
+
+.link line.separator {
+  stroke: #FFFFFF;
+  stroke-width: 2px;
+}
+
+path.link {
+  fill: #CCCCCC;
+  stroke: #333333;
+  stroke-width: 1.5px;
+}
+
+.node circle {
+  stroke: #000000;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 0.8em sans-serif;
+  pointer-events: none;
+}
+
+#currentView {
+  color: #FFF;
+}
+
 /*#endregion*/
 /*#region Legend*/
-  #legend {
-    position: fixed;
-    top: 5px;
-    z-index: 1;
-    background: #FFFFFFCC;
-    /*linear-gradient(0deg, rgba(255, 227, 210, 0.667), rgba(250, 255, 184, 0.667));*/
-  }
-  #legend, #legend>* {
-    border: 1px solid #333;
-  }
-  .pt-03-em {
-    padding-top: 0.26em;
-  }
-  .w6em {
-    width: 6em;
-  }
-  .w10em {
-    width: 10em;
-  }
-  .grid-container-6 {
-    display: grid;
-    grid-template-columns: auto auto auto auto auto auto;
-    /* reps = number of columns */
-  }
-  .legend-text {
-    padding-left: 5px;
-    padding-right: 10px;
-    vertical-align: text-top;
-  }
-  datalist, a, .legend-text {
-    font-size: smaller;
-  }
-  /* Navbar container */
-  .navbar {
-    overflow: hidden;
-    font-family: Arial;
-    position: fixed;
-    top: 5px;
-    /*left: 670px;*/
-    z-index: 1;
-  }
-  /* Links inside the navbar */
-  .navbar a {
-    float: left;
-    font-size: 1em;
-    text-align: center;
-    padding: 1em;
-    text-decoration: none;
-  }
-  /* The dropdown container */
-  .dropdown {
-    float: left;
-    overflow: hidden;
-  }
-  /* Dropdown button */
-  .dropdown .dropbtn {
-    font-size: 1em;
-    border: none;
-    outline: none;
-    background-color: inherit;
-    font-family: inherit; /* Important for vertical align on mobile phones */
-    margin: 0; /* Important for vertical align on mobile phones */
-  }
-  .dropdown {
-    padding: 14px 16px;
-  }
-  /* Add a red background color to navbar links on hover */
-  .navbar a:hover, .dropdown:hover .dropbtn {
-    background-color: #ddd;
-  }
-  /* Dropdown content (hidden by default) */
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-  }
-  /* Links inside the dropdown */
-  .dropdown-content a {
-    float: none;
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-    position: fixed;
-    left: 340px;
-    z-index: 1;
-    background: #FFFFFFAA;/*linear-gradient(0deg, rgba(255, 227, 210, 0.667), rgba(250, 255, 184, 0.667));*/
-  }
-  .dropdown-1 {
-    top: 20px;
-  }
-  .dropdown-2 {
-    top: 60px;
-  }
-  .dropdown-3 {
-    top: 100px;
-  }
-  .dropdown-4 {
-    top: 140px;
-  }
-  .dropdown-5 {
-    top: 180px;
-  }
-  .dropdown-6 {
-    top: 220px;
-  }
-  /* Add a grey background color to dropdown links on hover */
-  .dropdown-content a:hover {
-    background-color: #ddd;
-  }
-  /* Show the dropdown menu on hover */
-  .dropdown:hover .dropdown-content {
-    display: block;
-  }
+#legend {
+  position: fixed;
+  top: 5px;
+  z-index: 1;
+  background: #FFFFFFCC;
+  /*linear-gradient(0deg, rgba(255, 227, 210, 0.667), rgba(250, 255, 184, 0.667));*/
+}
+
+#legend,
+#legend>* {
+  border: 1px solid #333;
+}
+
+.pt-03-em {
+  padding-top: 0.26em;
+}
+
+.w6em {
+  width: 6em;
+}
+
+.w10em {
+  width: 10em;
+}
+
+.grid-container-6 {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto;
+  /* reps = number of columns */
+}
+
+.legend-text {
+  padding-left: 5px;
+  padding-right: 10px;
+  vertical-align: text-top;
+}
+
+datalist,
+a,
+.legend-text {
+  font-size: smaller;
+}
+
+/* Navbar container */
+.navbar {
+  overflow: hidden;
+  font-family: Arial;
+  position: fixed;
+  top: 5px;
+  /*left: 670px;*/
+  z-index: 1;
+}
+
+/* Links inside the navbar */
+.navbar a {
+  float: left;
+  font-size: 1em;
+  text-align: center;
+  padding: 1em;
+  text-decoration: none;
+}
+
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 1em;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  font-family: inherit;
+  /* Important for vertical align on mobile phones */
+  margin: 0;
+  /* Important for vertical align on mobile phones */
+}
+
+.dropdown {
+  padding: 14px 16px;
+}
+
+/* Add a red background color to navbar links on hover */
+.navbar a:hover,
+.dropdown:hover .dropbtn {
+  background-color: #ddd;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  position: fixed;
+  left: 340px;
+  z-index: 1;
+  background: #FFFFFFAA;
+  /*linear-gradient(0deg, rgba(255, 227, 210, 0.667), rgba(250, 255, 184, 0.667));*/
+}
+
+.dropdown-1 {
+  top: 20px;
+}
+
+.dropdown-2 {
+  top: 60px;
+}
+
+.dropdown-3 {
+  top: 100px;
+}
+
+.dropdown-4 {
+  top: 140px;
+}
+
+.dropdown-5 {
+  top: 180px;
+}
+
+.dropdown-6 {
+  top: 220px;
+}
+
+/* Add a grey background color to dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
 /*#endregion*/
 /*#region Colors*/
-  #loss    {background-color: #CC6666}
-  #geo     {background-color: #DE935F}
-  #presup  {background-color: #F0C674}
-  #income  {background-color: #B5BD68}
-  #paramx  {background-color: #8ABEB7}
-  #calconv {background-color: #81A2BE}
-  #sapbi   {background-color: #B294BB}
+#loss {
+  background-color: #CC6666
+}
 
-  #i22     {background-color: #6A717A; color: #FFFFFF;}
-  #i2      {background-color: #707880; color: #FFFFFF;}
-  #i21     {background-color: #9AA0A3; color: #FFFFFF;}
-  #i12     {background-color: #BEC1BF}
-  #i1      {background-color: #C5C8C6}
-  #i11     {background-color: #CCCFCD}
+#geo {
+  background-color: #DE935F
+}
+
+#presup {
+  background-color: #F0C674
+}
+
+#income {
+  background-color: #B5BD68
+}
+
+#paramx {
+  background-color: #8ABEB7
+}
+
+#calconv {
+  background-color: #81A2BE
+}
+
+#sapbi {
+  background-color: #B294BB
+}
+
+#i22 {
+  background-color: #6A717A;
+  color: #FFFFFF;
+}
+
+#i2 {
+  background-color: #707880;
+  color: #FFFFFF;
+}
+
+#i21 {
+  background-color: #9AA0A3;
+  color: #FFFFFF;
+}
+
+#i12 {
+  background-color: #BEC1BF
+}
+
+#i1 {
+  background-color: #C5C8C6
+}
+
+#i11 {
+  background-color: #CCCFCD
+}
+
 /*#endregion*/
