@@ -2,7 +2,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>D3.JS graph</title>
+  <title>D3.JS Graph</title>
   <link rel="stylesheet" href="style.css">
   <link href="imgs/layout/favicon_64.png" rel="icon" type="image/x-icon" />
   <script src="./libs/jquery-2.1.4.min.js"></script>
@@ -46,8 +46,49 @@
 
       var force = d3.layout.force()
         .size([width, height])
-        .charge(-400)
-        .linkDistance(function (d) { return radius(d.source.size) + radius(d.target.size) + 60; }); //antes 100
+        .charge(-2000) //-400
+        .linkDistance(function (d) {
+          return radius(d.source?.size ?? 1) + radius(d.target?.size ?? 1) + 60;
+        }); //antes 100
+
+      /*force.on("tick", function () {
+        // Update node positions
+        node.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+        // Group nodes by color
+        const groups = d3.nest()
+          .key(d => color(d.group)) // Group by color
+          .entries(graph.nodes);
+
+        // Update polygons
+        const polygons = svg.selectAll(".group-polygon")
+          .data(groups);
+
+        polygons.enter()
+          .append("polygon")
+          .attr("class", "group-polygon")
+          .style("fill", d => d.key)
+          .style("opacity", 0.2);
+
+        polygons
+          .attr("points", d => {
+            return d.values.map(node => [node.x, node.y].join(",")).join(" ");
+          });
+
+        polygons.exit().remove();
+      });
+
+      var node = svg.selectAll(".node")
+        .data(graph.nodes)
+        .enter().append("g")
+        .attr("class", "node")
+        .call(force.drag);
+
+      node.append("circle")
+        .attr("r", d => radius(d.size))
+        .style("fill", d => color(d.group));
+
+      force.nodes(graph.nodes).links(graph.links).start();*/
 
       function getGraph(currentView = 0, callback) {
         // try { document.getElementById("i22").innerHTML = "IMAB2"; }      catch(e) {/*No instanciado*/}
@@ -121,9 +162,9 @@
         link.append("line")
           .style("stroke-width", function (d) {
             if (d.source.u) {
-              return (d.bond * 2 - 1) * 2 + "px";
+              return ((d?.bond ?? 1) * 2 - 1) * 2 + "px";
             } else if (d.target.u) {
-              return (d.bond * 2 - 1) * 2 + "px";
+              return ((d?.bond ?? 1) * 2 - 1) * 2 + "px";
             } else if (d.color) {
               return "3px";
             } else {
@@ -136,16 +177,16 @@
               return "#006600";
             } else if (d.target.u) {
               return "#99CC66";
-            } else if (d.source.size === 0 || d.target.size === 0) {
+            } else if ((d.source?.size ?? 1) === 0 || (d.target?.size ?? 1) === 0) {
               return "#FFFFFF";
             } else if (d.color) {
               return d.color;
             } else {
-              return "#CCCCCC";
+              return "#CCCCCC66";
             }
           });
 
-        link.filter(function (d) { return d.bond > 1; }).append("line")
+        link.filter(function (d) { return (d?.bond ?? 1) > 1; }).append("line")
           .attr("class", "separator");
 
         var node = svg.selectAll(".node")
@@ -168,7 +209,7 @@
         node.append("circle")
           .attr("r", function (d) {
             //if (d.u) {
-            return radius(d.size);
+            return radius(d?.size ?? 1);
             /*} else {
               return radius(0);
             }*/
@@ -196,21 +237,21 @@
           .style("font-weight", 900)
           .attr("textLength", function (d) {
             // antes todo  doble menos
-            if (d.atom.length > d.size && d.atom.length > 10) {
+            if (d.atom.length > (d?.size ?? 1) && d.atom.length > 10) {
               return d.atom.length * 4;
-            } else if (d.atom.length <= d.size && d.size > 10) {
-              return d.size * 4;
+            } else if (d.atom.length <= (d?.size ?? 1) && (d?.size ?? 1) > 10) {
+              return (d?.size ?? 1) * 4;
             } else {
               return 40;
             }
           })
           .attr("lengthAdjust", "spacing")
           .style("font", function (d) {
-            textSize = Math.max(6, Math.floor(d.size / 3)) * 2; //antes todo sin * 2
+            textSize = Math.max(5, Math.floor((d?.size ?? 1) / 3)) * 2; //antes todo sin * 2
             return textSize + "px times";
           })
           .text(function (d) {
-            if (d.size > 0) {
+            if ((d?.size ?? 1) > 0) {
               return d.atom;
             } else {
               //console.log(`elemento omitido: ${d.atom}`)
@@ -231,7 +272,7 @@
             });
 
           function getTargetNodeCircumferencePoint(d) {
-            var t_radius = d.target.size; // size is the custom attribute I calculate during the creation of the nodes depending on the node width
+            var t_radius = d.target?.size ?? 1; // size is the custom attribute I calculate during the creation of the nodes depending on the node width
             var dx = d.target.x - d.source.x;
             var dy = d.target.y - d.source.y;
             var gamma = Math.atan2(dy, dx); // Math.atan2 returns the angle in the correct quadrant as opposed to Math.atan
@@ -336,9 +377,9 @@
       d3.select("svg").selectAll(".node").selectAll("circle")
         .attr("r", function (d) {
           if (d.atom === document.getElementById("t1").value) {
-            return radius(d.size + 50);
+            return radius((d?.size ?? 1) + 50);
           } else {
-            return radius(d.size);
+            return radius(d?.size ?? 1);
           }
         })
         .style("fill", function (d) {
@@ -388,17 +429,13 @@
               <i class="fa fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
-              <a class="dropdown-1" href="#" id="graphRS" onclick="setCurrentView(0)">Gráfico de Orígenes en
-                Redshift</a>
-              <a class="dropdown-2" href="#" id="graphI1" onclick="setCurrentView(1)">Conexiones en el Informe
-                Diario</a>
-              <a class="dropdown-3" href="#" id="graphI1M" onclick="setCurrentView(2)">Métricas Informe Diario</a>
-              <a class="dropdown-4" href="#" id="graphI1MR" onclick="setCurrentView(3)">Relación métricas Informe
-                Diario</a>
-              <a class="dropdown-5" href="#" id="graphI2" onclick="setCurrentView(4)">Conexiones en el Informe
-                Mensual</a>
-              <a class="dropdown-6" href="#" id="graphI1y2" onclick="setCurrentView(5)">Relaciones de los informes 1 y
-                2</a>
+              <a class="dropdown-1" href="#" id="graphMusic" onclick="setCurrentView(0)">0</a>
+              <a class="dropdown-1" href="#" id="graphRS" onclick="setCurrentView(1)">1</a>
+              <a class="dropdown-2" href="#" id="graphI1" onclick="setCurrentView(2)">2</a>
+              <a class="dropdown-3" href="#" id="graphI1M" onclick="setCurrentView(3)">3</a>
+              <a class="dropdown-4" href="#" id="graphI1MR" onclick="setCurrentView(4)">4</a>
+              <a class="dropdown-5" href="#" id="graphI2" onclick="setCurrentView(5)">5</a>
+              <a class="dropdown-6" href="#" id="graphI1y2" onclick="setCurrentView(6)">6</a>
             </div>
           </div>
         </div>
