@@ -97,6 +97,19 @@
     .graph-controls input {
       width: 100%;
     }
+
+    .graph-controls button {
+      width: 100%;
+      margin-top: 8px;
+      padding: 7px 10px;
+      border: 1px solid #999;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: #222;
+    }
   </style>
 </head>
 
@@ -118,6 +131,7 @@
       <span id="rotationValue">0°</span>
     </label>
     <input id="rotationSlider" type="range" min="-180" max="180" step="1" value="0">
+    <button id="logNodesButton" type="button">Log node positions</button>
   </div>
   <!-- <div id="controls"> -- Deprecated after inclusion of Voronoi cells
   <div id="scaleFactorSettings">
@@ -325,6 +339,17 @@
         rotation = +this.value;
         d3.select('#rotationValue').text(rotation + '°');
         applyGraphTransform();
+      });
+
+      d3.select('#logNodesButton').on('click', function () {
+        console.log('Nodes with text, x, y coordinates:');
+        graph.nodes.forEach(function (d) {
+          console.log({
+            text: d.id,
+            x: Number(d.x.toFixed(2)),
+            y: Number(d.y.toFixed(2))
+          });
+        });
       });
 
       // Group IDs containing at least 3 nodes (required for polygon hulls)
