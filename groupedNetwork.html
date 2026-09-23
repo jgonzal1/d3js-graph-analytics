@@ -4,7 +4,8 @@
   <title>Grouped network</title>
   <link rel="stylesheet" href="style.css">
   <link href="imgs/layout/favicon_64.png" rel="icon" type="image/x-icon" />
-  <script src="./libs/d3.v7.min.js"></script>
+  <script src='./libs/d3.v4.min.js'></script>
+  <!--<script src='https://d3js.org/d3.v4.min.js'></script>-->
   <style>
 
   body {
@@ -115,15 +116,14 @@ d3.json('miserables.json', function(error, graph) {
     .enter().append('circle')
     .attr('r', 5)
     .attr('fill', (d) => color(d.group))
-    .on("mouseover", function (event, d) {
+    .on("mouseover", function (d) {
       tooltip.text(d.id);
       return tooltip
         .style("visibility", "visible")
         .style("background", color(d.group));
     })
-    .on("mousemove", (event) => tooltip
-      .style("top", (event.pageY - 10) + "px")
-      .style("left", (event.pageX + 10) + "px")
+    .on("mousemove", () => tooltip.style("top", (d3.event.pageY - 10) + "px")
+      .style("left", (d3.event.pageX + 10) + "px")
     )
     .on("mouseout", () => tooltip.style("visibility", "hidden"))
     .call(d3.drag()
