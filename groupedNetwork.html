@@ -46,8 +46,7 @@ var svg = d3.select('svg'),
     height = +window.innerHeight,
     color = d3.scaleOrdinal(d3.schemeCategory20),
     valueline = d3.line()
-      .x(function(d) { return d[0]; })
-      .y(function(d) { return d[1]; })
+      .x((d)=>d[0]).y((d)=>d[1])
       .curve(d3.curveCatmullRomClosed),
     paths,
     groups,
@@ -66,8 +65,15 @@ var svg = d3.select('svg'),
     simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(function(d) { return d.id; }))
       .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(width / 2, height / 2));
-
+      .force('center', d3.forceCenter(width / 2, height / 2)),
+    tooltip = d3.select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("border", "solid")
+      .style("color", "#000000")
+      .style("padding", "5px")
+      ;
 
 d3.json('miserables.json', function(error, graph) {
   if (error) throw error;
@@ -88,6 +94,9 @@ d3.json('miserables.json', function(error, graph) {
     .append('option')
       .text(function (d) { return d; });
 
+  /*const color = d3.scaleOrdinal()
+      .domain(data.groups)
+      .range(d3.schemeCategory10)*/
 
   // create groups, links and nodes
   groups = svg.append('g').attr('class', 'groups');
@@ -97,31 +106,56 @@ d3.json('miserables.json', function(error, graph) {
     .selectAll('line')
     .data(graph.links)
     .enter().append('line')
-      .attr('stroke-width', function(d) { return Math.sqrt(d.value); });
+    .attr('stroke-width', (d) => Math.sqrt(d.value));
 
   node = svg.append('g')
-      .attr('class', 'nodes')
+    .attr('class', 'nodes')
     .selectAll('circle')
     .data(graph.nodes)
     .enter().append('circle')
-      .attr('r', 5)
-      .attr('fill', function(d) { return color(d.group); })
-      .call(d3.drag()
-          .on('start', dragstarted)
-          .on('drag', dragged)
-          .on('end', dragended));
+    .attr('r', 5)
+    .attr('fill', (d) => color(d.group))
+    .on("mouseover", function (event, d) {
+      tooltip.text(d.id);
+      return tooltip
+        .style("visibility", "visible")
+        .style("background", color(d.group));
+    })
+    .on("mousemove", (event) => tooltip
+      .style("top", (event.pageY - 10) + "px")
+      .style("left", (event.pageX + 10) + "px")
+    )
+    .on("mouseout", () => tooltip.style("visibility", "hidden"))
+    .call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended)
+    );
+
+  svg.selectAll('circle')
+    .data(graph.nodes)
+    .enter()
+    .append("title").text(d => {
+      console.log(d.id);
+      return d.id;
+    })
+    .attr('x', d => d.cx)
+    .attr('y', d => d.cy)
+    .attr('dy', '.35em') // Adjust text position vertically
+    .attr('text-anchor', 'middle') // Center the text
+  ;
 
   // count members of each group. Groups with less
   // than 3 member will not be considered (creating
   // a convex hull need 3 points at least)
   groupIds = d3.set(graph.nodes.map(function(n) { return +n.group; }))
     .values()
-    .map( function(groupId) {
-      return {
+    .map( (groupId) => { return {
         groupId : groupId,
-        count : graph.nodes.filter(function(n) { return +n.group == groupId; }).length
-      };
-    })
+        count : graph.nodes.filter(
+            function(n) { return +n.group == groupId; }
+        ).length
+    }})
     .filter( function(group) { return group.count > 2;})
     .map( function(group) { return group.groupId; });
 
@@ -168,6 +202,20 @@ d3.json('miserables.json', function(error, graph) {
         .attr('cy', function(d) { return d.y; });
 
     updateGroups();
+  }
+
+  function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+  }
+
+  function dragged(event, d) { d.fx = event.x; d.fy = event.y };
+
+  function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
   }
 
 });

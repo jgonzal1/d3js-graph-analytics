@@ -364,7 +364,6 @@
           .style("position", "absolute")
           .style("z-index", "10")
           .style("border", "solid")
-          //.style("visibility", "hidden")
           .style("color", "#000000")
           .style("padding", "5px")
 
@@ -420,7 +419,7 @@
             .attr('x', d => d.cx)
             .attr('y', d => d.cy)
             .attr('dy', '.35em') // Adjust text position vertically
-            .attr('text-anchor', 'middle') // Center the text*/
+            .attr('text-anchor', 'middle') // Center the text
 
         simulation.on("tick", () => {
             link
