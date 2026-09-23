@@ -2,3 +2,4 @@ _less
 desktop.ini
 files.md
 *.sst
+*.ignore.*
