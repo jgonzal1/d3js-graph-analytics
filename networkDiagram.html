@@ -5,7 +5,7 @@
     <title>Network Diagram (Force-Directed)</title>
     <link rel="stylesheet" href="style.css">
     <link href="imgs/layout/favicon_64.png" rel="icon" type="image/x-icon" />
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./libs/d3.v7.min.js"></script>
     <style>
         .node { stroke: #fff; stroke-width: 1.5px; }
         .link { stroke: #999; stroke-opacity: 0.6; }
@@ -359,8 +359,22 @@
 
         const links = graph.links.map(d => ({...d}));
         const nodes = graph.nodes.map(d => ({...d}));
+        var tooltip = d3.select("body")
+          .append("div")
+          .style("position", "absolute")
+          .style("z-index", "10")
+          .style("border", "solid")
+          //.style("visibility", "hidden")
+          .style("color", "#000000")
+          .style("padding", "5px")
 
-        const simulation = d3.forceSimulation(graph.nodes)
+        /*var simulation = d3.layout.force()
+            .size([width, height])
+            .charge(-2000) //-400
+            .linkDistance(function (d) {
+                return radius(d.source?.size ?? 1) + radius(d.target?.size ?? 1) + 60;
+            })*/
+        var simulation = d3.forceSimulation(graph.nodes)
             .force("link", d3.forceLink(graph.links).id(d => d.id))
             .force("charge", d3.forceManyBody().strength(-200))
             .force("center", d3.forceCenter(width / 2, height / 2));
@@ -372,35 +386,41 @@
             .enter().append("line")
             .attr("class", "link");
 
-        const node = svg.append("g")
-            .attr("class", "nodes")
-            .selectAll("circle")
+        var node = svg.selectAll(".node")
             .data(graph.nodes)
-            .join("circle")
+            .enter().append("g")
+            .attr("class", "node")
+            .append("circle")
             .attr("r", 10)
             .attr("fill", d => color(d.group))
-            .attr("text", d => d.id)
+            .on("mouseover", function (event, d) {
+                tooltip.text(d.id);
+                return tooltip
+                    .style("visibility", "visible")
+                    .style("background", color(d.group));
+            })
+            .on("mousemove", (event) => tooltip
+                .style("top", (event.pageY - 10) + "px")
+                .style("left", (event.pageX + 10) + "px")
+            )
+            .on("mouseout", () => tooltip.style("visibility", "hidden"))
             .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended));
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended)
+            );
 
         svg.selectAll('circle')
             .data(graph.nodes)
             .enter()
-            .append('text')
+            .append("title").text(d => {
+                console.log(d.id);
+                return d.id;
+            })
             .attr('x', d => d.cx)
             .attr('y', d => d.cy)
             .attr('dy', '.35em') // Adjust text position vertically
-            .attr('text-anchor', 'middle') // Center the text
-            .text(d => d.id)
-            .attr('fill', 'white'); // Text color
-
-        //node.append("text")
-        //    .text(d => {
-        //        console.log(d);
-        //        return d.id;
-        //    });
+            .attr('text-anchor', 'middle') // Center the text*/
 
         simulation.on("tick", () => {
             link
