@@ -128,21 +128,23 @@
         .enter()
         .append("rect")
         .attr("x", 50)
-        .attr("y", function (d, i) { return 45 + (i * 10); })
+        .attr("y", (d, i) => (45 + (i * 10)))
+        .attr("visibility", (d, i) => d === "" ? "hidden" : "visible")
         .attr("width", 8)
         .attr("height", 8)
-        .attr("fill", function (d, i) { return color(i); });
+        .attr("fill", (d, i) => color(i));
 
       legend.selectAll("text")
         .data(graph.network_zones)
         .enter()
         .append("text")
         .attr("x", 62)
-        .attr("y", function (d, i) { return 50 + (i * 10); })
+        .attr("y", (d, i) => (50 + (i * 10)))
+        .attr("visibility", (d, i) => d === "" ? "hidden" : "visible")
         .attr("dominant-baseline", "middle")
         .style("font-size", "10px")
         .style("font-weight", "normal")
-        .text(function (d) { return d; });
+        .text((d) => d);
 
       // Dropdown selector for curve types
       var select = d3.select('#curveSettings')
@@ -173,9 +175,13 @@
 
       node = svg.append('g')
         .attr('class', 'nodes')
-        .selectAll('circle')
+        .selectAll('g.node')
         .data(graph.nodes)
-        .enter().append('circle')
+        .enter()
+        .append('g')
+        .attr('class', 'node');
+
+      node.append('circle')
         .attr('r', 6)
         .attr('fill', function (d) { return color(d.group); })
         .on("mouseover", function (d) {
@@ -196,26 +202,15 @@
           .on('end', dragended)
         );
 
-      /*svg.selectAll('circle')
-        .data(graph.nodes)
-        .enter()
-        .append("title").text(d => {
-          console.log(d.id);
-          return d.id;
-        })
-        .attr('x', d => d.cx)
-        .attr('y', d => d.cy)
-        .attr('dy', '.35em') // Adjust text position vertically
-        .attr('text-anchor', 'middle') // Center the text
-      ;*/
-
-      node.append("text")
-        .text(function (d) { console.log(d.id); return d.id; })
-        .attr("dx", 12) // start text outside circle
-        .attr("dy", ".35em")
-        .style("font-size", "10px")
-        .style("pointer-events", "none")
-        .style("overflow", "visible");
+      node.append('text')
+        .text(function (d) { return d.id; })
+        .attr('x', 10)
+        .attr('y', 0)
+        .attr('dy', '0.35em')
+        .style('font-size', '10px')
+        .style('font-weight', 'normal')
+        .style('pointer-events', 'none')
+        .style('fill', '#222');
 
       // Group IDs containing at least 3 nodes (required for polygon hulls)
       groupIds = d3.set(graph.nodes.map(function (n) { return +n.group; }))
@@ -311,10 +306,9 @@
           .attr('x2', function (d) { return d.target.x; })
           .attr('y2', function (d) { return d.target.y; });
 
-        // Update node circle positions
+        // Update node group positions so the circle and its label move together
         node
-          .attr('cx', function (d) { return d.x; })
-          .attr('cy', function (d) { return d.y; });
+          .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')'; });
 
         // 4. SO Approach: Update Voronoi cell paths
         var polygons = voronoi.polygons(graph.nodes);
