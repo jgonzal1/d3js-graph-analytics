@@ -43,15 +43,77 @@
       position: absolute;
       top: 10px;
       left: 10px;
-      background: rgba(255, 255, 255, 0.85);
+      background: #FFFE;
       padding: 10px;
       border-radius: 5px;
       z-index: 10;
+    }
+
+    .zoom-controls {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 20;
+      background-color: #FFF6
+    }
+
+    .zoom-controls button {
+      width: 36px;
+      height: 30px;
+      border: 1px solid #999;
+      border-radius: 4px;
+      background: #FFFE;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .graph-controls {
+      position: absolute;
+      top: 120px;
+      right: 12px;
+      width: 180px;
+      background-color: #FFF6;
+      border: 1px solid #DDD;
+      border-radius: 6px;
+      padding: 10px 12px;
+      z-index: 20;
+      font-size: 12px;
+      color: #222;
+    }
+
+    .graph-controls label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .graph-controls input {
+      width: 100%;
     }
   </style>
 </head>
 
 <body>
+  <div class="zoom-controls">
+    <button id="zoomIn" type="button" aria-label="Zoom in">+</button>
+    <button id="zoomOut" type="button" aria-label="Zoom out">−</button>
+    <button id="zoomReset" type="button" aria-label="Reset zoom">⟳</button>
+  </div>
+
+  <div class="graph-controls">
+    <label for="nodeSpacingSlider">
+      <span>Node spacing</span>
+      <span id="nodeSpacingValue">80</span>
+    </label>
+    <input id="nodeSpacingSlider" type="range" min="30" max="200" step="5" value="80">
+  </div>
   <!-- <div id="controls"> -- Deprecated after inclusion of Voronoi cells
   <div id="scaleFactorSettings">
     <p>Scale of the groups: <span id='scaleFactorLabel'>1.2</span></p>
@@ -78,17 +140,28 @@
       groups,
       groupIds,
       scaleFactor = 1.2,
+      nodeSpacing = 80,
       node,
       link,
       centroid,
       voronoiGroup,
       voronoiCells,
+      graphLayer,
+      zoom,
       curveTypes = [
         'curveBasisClosed',
         'curveCardinalClosed',
         'curveCatmullRomClosed',
         'curveLinearClosed'
       ];
+
+    zoom = d3.zoom()
+      .scaleExtent([0.3, 8])
+      .on('zoom', function () {
+        if (graphLayer) {
+          graphLayer.attr('transform', d3.event.transform);
+        }
+      });
 
     // 1. Initialize simulation with group-weighted link forces
     var simulation = d3.forceSimulation()
@@ -97,8 +170,9 @@
           // Stronger attraction within groups, weaker across groups
           return (link.source.group === link.target.group) ? 1.0 : 0.1;
         })
+        .distance(function () { return nodeSpacing; })
       )
-      .force('charge', d3.forceManyBody().strength(-80))
+      .force('charge', d3.forceManyBody().strength(-nodeSpacing * 1.5))
       .force('center', d3.forceCenter(width / 2, height / 2));
 
     // Initialize Voronoi generator
@@ -163,17 +237,20 @@
         .text(function (d) { return d; });
 
       // Render order: 1. Voronoi cells, 2. Group hulls, 3. Links, 4. Nodes
-      voronoiGroup = svg.append('g').attr('class', 'voronoi');
-      groups = svg.append('g').attr('class', 'groups');
+      graphLayer = svg.append('g').attr('class', 'graph-layer');
+      voronoiGroup = graphLayer.append('g').attr('class', 'voronoi');
+      groups = graphLayer.append('g').attr('class', 'groups');
 
-      link = svg.append('g')
+      graphLayer.call(zoom);
+
+      link = graphLayer.append('g')
         .attr('class', 'links')
         .selectAll('line')
         .data(graph.links)
         .enter().append('line')
         .attr('stroke-width', function (d) { return Math.sqrt(d.value || 1); });
 
-      node = svg.append('g')
+      node = graphLayer.append('g')
         .attr('class', 'nodes')
         .selectAll('g.node')
         .data(graph.nodes)
@@ -211,6 +288,26 @@
         .style('font-weight', 'normal')
         .style('pointer-events', 'none')
         .style('fill', '#222');
+
+      d3.select('#zoomIn').on('click', function () {
+        graphLayer.transition().duration(250).call(zoom.scaleBy, 1.2);
+      });
+
+      d3.select('#zoomOut').on('click', function () {
+        graphLayer.transition().duration(250).call(zoom.scaleBy, 1 / 1.2);
+      });
+
+      d3.select('#zoomReset').on('click', function () {
+        graphLayer.transition().duration(250).call(zoom.transform, d3.zoomIdentity);
+      });
+
+      d3.select('#nodeSpacingSlider').on('input', function () {
+        nodeSpacing = +this.value;
+        d3.select('#nodeSpacingValue').text(nodeSpacing);
+        simulation.force('link').distance(nodeSpacing);
+        simulation.force('charge').strength(-nodeSpacing * 1.5);
+        simulation.alpha(0.7).restart();
+      });
 
       // Group IDs containing at least 3 nodes (required for polygon hulls)
       groupIds = d3.set(graph.nodes.map(function (n) { return +n.group; }))
