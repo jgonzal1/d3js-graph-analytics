@@ -166,5 +166,15 @@
     {"source":"APP-2894.SN9999.P","target":"APP-2857.SN010.P", "value":1},
     {"source":"APP-2894.SN9999.P","target":"APP-2857.SN011.P", "value":1},
     {"source":"APP-2894.SN9999.P","target":"APP-2857.SN041.P", "value":1}
+  ], "network_zones": [
+    "",
+    "Core Inside",
+    "DMZ Application",
+    "DMZ Database",
+    "DMZ LBS Exposed",
+    "DMZ Management",
+    "DMZ Messaging",
+    "External/Internet",
+    "LAN"
   ]
 }

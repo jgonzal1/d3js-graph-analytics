@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset='utf-8'>
   <title>Grouped network</title>
@@ -49,317 +50,357 @@
     }
   </style>
 </head>
+
 <body>
-<div id="controls">
+  <!-- <div id="controls"> -- Deprecated after inclusion of Voronoi cells
   <div id="scaleFactorSettings">
     <p>Scale of the groups: <span id='scaleFactorLabel'>1.2</span></p>
     <input type="range" min="1" max="3" value="1.2" step=".1"
-      oninput="scaleFactor = value; d3.select('#scaleFactorLabel').text(scaleFactor); updateGroups();">
+      oninput="scaleFactor = value; d3.select('#scaleFactorLabel')
+        .text(scaleFactor); updateGroups();">
   </div>
   <div id="curveSettings">
     <p>Type of curve: <span id='curveLabel'>curveCatmullRomClosed</span></p>
   </div>
-</div>
-<svg width='100vw' height='100vh'></svg>
+</div>-->
+  <svg width='100vw' height='100vh'></svg>
 
-<script>
-var svg = d3.select('svg'),
-    width = window.innerWidth,
-    height = window.innerHeight,
-    color = d3.scaleOrdinal(d3.schemeCategory20),
-    valueline = d3.line()
-      .x(function(d) { return d; })
-      .y(function(d) { return d[11]; })
-      .curve(d3.curveCatmullRomClosed),
-    paths,
-    groups,
-    groupIds,
-    scaleFactor = 1.2,
-    node,
-    link,
-    centroid,
-    voronoiGroup,
-    voronoiCells,
-    curveTypes = [
-      'curveBasisClosed',
-      'curveCardinalClosed',
-      'curveCatmullRomClosed',
-      'curveLinearClosed'
-    ];
+  <script>
+    var svg = d3.select('svg'),
+      width = window.innerWidth,
+      height = window.innerHeight,
+      color = d3.scaleOrdinal(d3.schemeCategory20),
+      valueline = d3.line()
+        .x(function (d) { return d; })
+        .y(function (d) { return d[11]; })
+        .curve(d3.curveCatmullRomClosed),
+      paths,
+      groups,
+      groupIds,
+      scaleFactor = 1.2,
+      node,
+      link,
+      centroid,
+      voronoiGroup,
+      voronoiCells,
+      curveTypes = [
+        'curveBasisClosed',
+        'curveCardinalClosed',
+        'curveCatmullRomClosed',
+        'curveLinearClosed'
+      ];
 
-// 1. Initialize simulation with group-weighted link forces (Stack Overflow approach)
-var simulation = d3.forceSimulation()
-  .force('link', d3.forceLink().id(function(d) { return d.id; })
-    .strength(function(link) {
-      // Stronger attraction within groups, weaker across groups
-      return (link.source.group === link.target.group) ? 1.0 : 0.1;
-    })
-  )
-  .force('charge', d3.forceManyBody().strength(-80))
-  .force('center', d3.forceCenter(width / 2, height / 2));
+    // 1. Initialize simulation with group-weighted link forces
+    var simulation = d3.forceSimulation()
+      .force('link', d3.forceLink().id(function (d) { return d.id; })
+        .strength(function (link) {
+          // Stronger attraction within groups, weaker across groups
+          return (link.source.group === link.target.group) ? 1.0 : 0.1;
+        })
+      )
+      .force('charge', d3.forceManyBody().strength(-80))
+      .force('center', d3.forceCenter(width / 2, height / 2));
 
-// Initialize Voronoi generator
-var voronoi = d3.voronoi()
-  .x(function(d) { return d.x; })
-  .y(function(d) { return d.y; })
-  .extent([[-10, -10], [width + 10, height + 10]]);
+    // Initialize Voronoi generator
+    var voronoi = d3.voronoi()
+      .x(function (d) { return d.x; })
+      .y(function (d) { return d.y; })
+      .extent([[-10, -10], [width + 10, height + 10]]);
 
-var tooltip = d3.select("body")
-  .append("div")
-  .style("position", "absolute")
-  .style("z-index", "20")
-  .style("border", "1px solid #333")
-  .style("padding", "5px")
-  .style("background", "#fff")
-  .style("visibility", "hidden");
+    var tooltip = d3.select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("z-index", "20")
+      .style("border", "1px solid #333")
+      .style("padding", "5px")
+      .style("background", "#fff")
+      .style("visibility", "hidden");
 
-d3.json('data/ewa.json', function(error, graph) {
-  if (error) throw error;
+    d3.json('data/ewa.json', function (error, graph) {
+      if (error) throw error;
 
-  // Dropdown selector for curve types
-  var select = d3.select('#curveSettings')
-    .append('select')
-    .attr('class','select')
-    .on('change', function() {
-      var val = d3.select(this).property('value');
-      d3.select('#curveLabel').text(val);
-      valueline.curve(d3[val]);
-      updateGroups();
-    });
+      // Legend for network zones
+      var legend = svg.append("g")
+        .attr("class", "legend");
 
-  select.selectAll('option')
-    .data(curveTypes).enter()
-    .append('option')
-    .text(function(d) { return d; });
+      legend.selectAll("rect")
+        .data(graph.network_zones)
+        .enter()
+        .append("rect")
+        .attr("x", 50)
+        .attr("y", function (d, i) { return 45 + (i * 10); })
+        .attr("width", 8)
+        .attr("height", 8)
+        .attr("fill", function (d, i) { return color(i); });
 
-  // Render order: 1. Voronoi cells, 2. Group hulls, 3. Links, 4. Nodes
-  voronoiGroup = svg.append('g').attr('class', 'voronoi');
-  groups = svg.append('g').attr('class', 'groups');
+      legend.selectAll("text")
+        .data(graph.network_zones)
+        .enter()
+        .append("text")
+        .attr("x", 62)
+        .attr("y", function (d, i) { return 50 + (i * 10); })
+        .attr("dominant-baseline", "middle")
+        .style("font-size", "10px")
+        .style("font-weight", "normal")
+        .text(function (d) { return d; });
 
-  link = svg.append('g')
-    .attr('class', 'links')
-    .selectAll('line')
-    .data(graph.links)
-    .enter().append('line')
-    .attr('stroke-width', function(d) { return Math.sqrt(d.value || 1); });
+      // Dropdown selector for curve types
+      var select = d3.select('#curveSettings')
+        .append('select')
+        .attr('class', 'select')
+        .on('change', function () {
+          var val = d3.select(this).property('value');
+          d3.select('#curveLabel').text(val);
+          valueline.curve(d3[val]);
+          updateGroups();
+        });
 
-  node = svg.append('g')
-    .attr('class', 'nodes')
-    .selectAll('circle')
-    .data(graph.nodes)
-    .enter().append('circle')
-    .attr('r', 6)
-    .attr('fill', function(d) { return color(d.group); })
-    .on("mouseover", function(d) {
-      tooltip.text(d.id)
-        .style("visibility", "visible")
-        .style("background", color(d.group));
-    })
-    .on("mousemove", function() {
-      tooltip.style("top", (d3.event.pageY - 10) + "px")
-        .style("left", (d3.event.pageX + 10) + "px");
-    })
-    .on("mouseout", function() {
-      tooltip.style("visibility", "hidden");
-    })
-    .call(d3.drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended)
-    );
+      select.selectAll('option')
+        .data(curveTypes).enter()
+        .append('option')
+        .text(function (d) { return d; });
 
- /*
- svg.selectAll('circle')
-    .data(graph.nodes)
-    .enter()
-    .append("title").text(d => {
-      console.log(d.id);
-      return d.id;
-    })
-    .attr('x', d => d.cx)
-    .attr('y', d => d.cy)
-    .attr('dy', '.35em') // Adjust text position vertically
-    .attr('text-anchor', 'middle') // Center the text
-  ;
- */
+      // Render order: 1. Voronoi cells, 2. Group hulls, 3. Links, 4. Nodes
+      voronoiGroup = svg.append('g').attr('class', 'voronoi');
+      groups = svg.append('g').attr('class', 'groups');
 
-  // Group IDs containing at least 3 nodes (required for polygon hulls)
-  groupIds = d3.set(graph.nodes.map(function(n) { return +n.group; }))
-    .values()
-    .map(function(groupId) {
-      return {
-        groupId: groupId,
-        count: graph.nodes.filter(function(n) { return +n.group == groupId; }).length
-      };
-    })
-    .filter(function(group) { return group.count > 2; })
-    .map(function(group) { return group.groupId; });
+      link = svg.append('g')
+        .attr('class', 'links')
+        .selectAll('line')
+        .data(graph.links)
+        .enter().append('line')
+        .attr('stroke-width', function (d) { return Math.sqrt(d.value || 1); });
 
-  paths = groups.selectAll('.path_placeholder')
-    .data(groupIds, function(d) { return +d; })
-    .enter()
-    .append('g')
-    .attr('class', 'path_placeholder')
-    .append('path')
-    .attr('class', 'group-hull')
-    .attr('stroke', function(d) { return color(d); })
-    .attr('fill', function(d) { return color(d); })
-    .attr('opacity', 0);
-
-  paths.transition().duration(2000).attr('opacity', 1);
-
-  // Group drag interactions
-  groups.selectAll('.path_placeholder')
-    .call(d3.drag()
-      .on('start', group_dragstarted)
-      .on('drag', group_dragged)
-      .on('end', group_dragended)
-    );
-
-  // Voronoi cell elements per node
-  voronoiCells = voronoiGroup.selectAll('path')
-    .data(graph.nodes)
-    .enter().append('path')
-    .attr('fill', function(d) { return color(d.group); });
-
-  simulation
-    .nodes(graph.nodes)
-    .on('tick', ticked);
-
-  simulation.force('link')
-    .links(graph.links);
-
-  function ticked() {
-    // 2. SO Approach: Compute centroid for each group on tick
-    var coords = {};
-    graph.nodes.forEach(function(d) {
-      if (!coords[d.group]) coords[d.group] = [];
-      coords[d.group].push(d);
-    });
-
-    var centroids = {};
-    for (var grp in coords) {
-      var groupNodes = coords[grp];
-      var n = groupNodes.length;
-      var tx = 0, ty = 0;
-      groupNodes.forEach(function(d) {
-        tx += d.x;
-        ty += d.y;
-      });
-      centroids[grp] = { x: tx / n, y: ty / n };
-    }
-
-    // 3. SO Approach: Nudge distant nodes towards their group centroid
-    var alpha = simulation.alpha();
-    var minDistance = 10;
-    if (alpha < 0.1) {
-      minDistance = 10 + (1000 * (0.1 - alpha));
-    }
-
-    graph.nodes.forEach(function(d) {
-      if (!centroids[d.group]) return;
-      var cx = centroids[d.group].x;
-      var cy = centroids[d.group].y;
-      var dx = cx - d.x;
-      var dy = cy - d.y;
-      var r = Math.sqrt(dx * dx + dy * dy);
-      if (r > minDistance) {
-        d.x = d.x * 0.9 + cx * 0.1;
-        d.y = d.y * 0.9 + cy * 0.1;
-      }
-    });
-
-    // Update link lines
-    link
-      .attr('x1', function(d) { return d.source.x; })
-      .attr('y1', function(d) { return d.source.y; })
-      .attr('x2', function(d) { return d.target.x; })
-      .attr('y2', function(d) { return d.target.y; });
-
-    // Update node circle positions
-    node
-      .attr('cx', function(d) { return d.x; })
-      .attr('cy', function(d) { return d.y; });
-
-    // 4. SO Approach: Update Voronoi cell paths
-    var polygons = voronoi.polygons(graph.nodes);
-    voronoiCells
-      .data(polygons)
-      .attr('d', function(d) { return d ? "M" + d.join("L") + "Z" : null; });
-
-    // Update group hulls
-    updateGroups();
-  }
-});
-
-// Convex hull generator for groups
-var polygonGenerator = function(groupId) {
-  var node_coords = node
-    .filter(function(d) { return d.group == groupId; })
-    .data()
-    .map(function(d) { return [d.x, d.y]; });
-  return d3.polygonHull(node_coords);
-};
-
-function updateGroups() {
-  groupIds.forEach(function(groupId) {
-    var path = paths.filter(function(d) { return d == groupId; })
-      .attr('transform', 'scale(1) translate(0,0)')
-      .attr('d', function(d) {
-        var polygon = polygonGenerator(d);
-        if (!polygon) return null;
-        var centroid = d3.polygonCentroid(polygon);
-        return valueline(
-          polygon.map(function(point) {
-            return [point - centroid, point[11] - centroid[11]];
-          })
+      node = svg.append('g')
+        .attr('class', 'nodes')
+        .selectAll('circle')
+        .data(graph.nodes)
+        .enter().append('circle')
+        .attr('r', 6)
+        .attr('fill', function (d) { return color(d.group); })
+        .on("mouseover", function (d) {
+          tooltip.text(d.id)
+            .style("visibility", "visible")
+            .style("background", color(d.group));
+        })
+        .on("mousemove", function () {
+          tooltip.style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", function () {
+          tooltip.style("visibility", "hidden");
+        })
+        .call(d3.drag()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended)
         );
-      });
 
-    if (path.node()) {
-      var polygon = polygonGenerator(groupId);
-      if (polygon) {
-        var centroid = d3.polygonCentroid(polygon);
-        d3.select(path.node().parentNode)
-          .attr('transform', 'translate(' + centroid + ',' + centroid[11] + ') scale(' + scaleFactor + ')');
+      /*svg.selectAll('circle')
+        .data(graph.nodes)
+        .enter()
+        .append("title").text(d => {
+          console.log(d.id);
+          return d.id;
+        })
+        .attr('x', d => d.cx)
+        .attr('y', d => d.cy)
+        .attr('dy', '.35em') // Adjust text position vertically
+        .attr('text-anchor', 'middle') // Center the text
+      ;*/
+
+      node.append("text")
+        .text(function (d) { console.log(d.id); return d.id; })
+        .attr("dx", 12) // start text outside circle
+        .attr("dy", ".35em")
+        .style("font-size", "10px")
+        .style("pointer-events", "none")
+        .style("overflow", "visible");
+
+      // Group IDs containing at least 3 nodes (required for polygon hulls)
+      groupIds = d3.set(graph.nodes.map(function (n) { return +n.group; }))
+        .values()
+        .map(function (groupId) {
+          return {
+            groupId: groupId,
+            count: graph.nodes.filter
+              (function (n) { return +n.group == groupId; }).length
+          };
+        })
+        .filter(function (group) { return group.count > 2; })
+        .map(function (group) { return group.groupId; });
+
+      paths = groups.selectAll('.path_placeholder')
+        .data(groupIds, function (d) { return +d; })
+        .enter()
+        .append('g')
+        .attr('class', 'path_placeholder')
+        .append('path')
+        .attr('class', 'group-hull')
+        .attr('stroke', function (d) { return color(d); })
+        .attr('fill', function (d) { return color(d); })
+        .attr('opacity', 0);
+
+      paths.transition().duration(2000).attr('opacity', 1);
+
+      // Group drag interactions
+      groups.selectAll('.path_placeholder')
+        .call(d3.drag()
+          .on('start', group_dragstarted)
+          .on('drag', group_dragged)
+          .on('end', group_dragended)
+        );
+
+      // Voronoi cell elements per node
+      voronoiCells = voronoiGroup.selectAll('path')
+        .data(graph.nodes)
+        .enter().append('path')
+        .attr('fill', function (d) { return color(d.group); });
+
+      simulation
+        .nodes(graph.nodes)
+        .on('tick', ticked);
+
+      simulation.force('link')
+        .links(graph.links);
+
+      function ticked() {
+        // 2. SO Approach: Compute centroid for each group on tick
+        var coords = {};
+        graph.nodes.forEach(function (d) {
+          if (!coords[d.group]) coords[d.group] = [];
+          coords[d.group].push(d);
+        });
+
+        var centroids = {};
+        for (var grp in coords) {
+          var groupNodes = coords[grp];
+          var n = groupNodes.length;
+          var tx = 0, ty = 0;
+          groupNodes.forEach(function (d) {
+            tx += d.x;
+            ty += d.y;
+          });
+          centroids[grp] = { x: tx / n, y: ty / n };
+        }
+
+        // 3. SO Approach: Nudge distant nodes towards their group centroid
+        var alpha = simulation.alpha();
+        var minDistance = 10;
+        if (alpha < 0.1) {
+          minDistance = 10 + (1000 * (0.1 - alpha));
+        }
+
+        graph.nodes.forEach(function (d) {
+          if (!centroids[d.group]) return;
+          var cx = centroids[d.group].x;
+          var cy = centroids[d.group].y;
+          var dx = cx - d.x;
+          var dy = cy - d.y;
+          var r = Math.sqrt(dx * dx + dy * dy);
+          if (r > minDistance) {
+            d.x = d.x * 0.9 + cx * 0.1;
+            d.y = d.y * 0.9 + cy * 0.1;
+          }
+        });
+
+        // Update link lines
+        link
+          .attr('x1', function (d) { return d.source.x; })
+          .attr('y1', function (d) { return d.source.y; })
+          .attr('x2', function (d) { return d.target.x; })
+          .attr('y2', function (d) { return d.target.y; });
+
+        // Update node circle positions
+        node
+          .attr('cx', function (d) { return d.x; })
+          .attr('cy', function (d) { return d.y; });
+
+        // 4. SO Approach: Update Voronoi cell paths
+        var polygons = voronoi.polygons(graph.nodes);
+        voronoiCells
+          .data(polygons)
+          .attr('d', function (d)
+            { return d ? "M" + d.join("L") + "Z" : null; }
+          );
+
+        // Update group hulls
+        updateGroups();
       }
-    }
-  });
-}
-
-// Drag callbacks for nodes
-function dragstarted(d) {
-  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-  d.fx = d.x;
-  d.fy = d.y;
-}
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
-}
-function dragended(d) {
-  if (!d3.event.active) simulation.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
-}
-
-// Drag callbacks for group hulls
-function group_dragstarted(groupId) {
-  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-  d3.select(this).select('path').style('stroke-width', 3);
-}
-function group_dragged(groupId) {
-  node
-    .filter(function(d) { return d.group == groupId; })
-    .each(function(d) {
-      d.x += d3.event.dx;
-      d.y += d3.event.dy;
     });
-}
-function group_dragended(groupId) {
-  if (!d3.event.active) simulation.alphaTarget(0);
-  d3.select(this).select('path').style('stroke-width', 1);
-}
-</script>
+
+    // Convex hull generator for groups
+    var polygonGenerator = function (groupId) {
+      var node_coords = node
+        .filter(function (d) { return d.group == groupId; })
+        .data()
+        .map(function (d) { return [d.x, d.y]; });
+      return d3.polygonHull(node_coords);
+    };
+
+    function updateGroups() {
+      groupIds.forEach(function (groupId) {
+        var path = paths.filter(function (d) { return d == groupId; })
+          .attr('transform', 'scale(1) translate(0,0)')
+          .attr('d', function (d) {
+            var polygon = polygonGenerator(d);
+            if (!polygon) return null;
+            var centroid = d3.polygonCentroid(polygon);
+            return valueline(
+              polygon.map(function (point) {
+                return [point - centroid, point[11] - centroid[11]];
+              })
+            );
+          });
+
+        if (path.node()) {
+          var polygon = polygonGenerator(groupId);
+          if (polygon) {
+            var centroid = d3.polygonCentroid(polygon);
+            d3.select(path.node().parentNode).attr(
+              'transform',
+              'translate(' + centroid + ',' + centroid[11] +
+              ') scale(' + scaleFactor + ')'
+            );
+          }
+        }
+      });
+    }
+
+    // Drag callbacks for nodes
+    function dragstarted(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+    function dragended(d) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+
+    // Drag callbacks for group hulls
+    function group_dragstarted(groupId) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+      d3.select(this).select('path').style('stroke-width', 3);
+    }
+    function group_dragged(groupId) {
+      node
+        .filter(function (d) { return d.group == groupId; })
+        .each(function (d) {
+          d.x += d3.event.dx;
+          d.y += d3.event.dy;
+        });
+    }
+    function group_dragended(groupId) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d3.select(this).select('path').style('stroke-width', 1);
+    }
+  </script>
 </body>
+
 </html>
