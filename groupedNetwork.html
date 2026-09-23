@@ -113,6 +113,11 @@
       <span id="nodeSpacingValue">80</span>
     </label>
     <input id="nodeSpacingSlider" type="range" min="30" max="200" step="5" value="80">
+    <label for="rotationSlider">
+      <span>Rotate</span>
+      <span id="rotationValue">0°</span>
+    </label>
+    <input id="rotationSlider" type="range" min="-180" max="180" step="1" value="0">
   </div>
   <!-- <div id="controls"> -- Deprecated after inclusion of Voronoi cells
   <div id="scaleFactorSettings">
@@ -148,6 +153,8 @@
       voronoiCells,
       graphLayer,
       zoom,
+      rotation = 0,
+      currentZoomTransform = d3.zoomIdentity,
       curveTypes = [
         'curveBasisClosed',
         'curveCardinalClosed',
@@ -155,12 +162,17 @@
         'curveLinearClosed'
       ];
 
+    function applyGraphTransform() {
+      if (!graphLayer) return;
+      var transform = currentZoomTransform || d3.zoomIdentity;
+      graphLayer.attr('transform', transform + ' rotate(' + rotation + ' ' + (width / 2) + ' ' + (height / 2) + ')');
+    }
+
     zoom = d3.zoom()
       .scaleExtent([0.3, 8])
       .on('zoom', function () {
-        if (graphLayer) {
-          graphLayer.attr('transform', d3.event.transform);
-        }
+        currentZoomTransform = d3.event.transform;
+        applyGraphTransform();
       });
 
     // 1. Initialize simulation with group-weighted link forces
@@ -307,6 +319,12 @@
         simulation.force('link').distance(nodeSpacing);
         simulation.force('charge').strength(-nodeSpacing * 1.5);
         simulation.alpha(0.7).restart();
+      });
+
+      d3.select('#rotationSlider').on('input', function () {
+        rotation = +this.value;
+        d3.select('#rotationValue').text(rotation + '°');
+        applyGraphTransform();
       });
 
       // Group IDs containing at least 3 nodes (required for polygon hulls)
