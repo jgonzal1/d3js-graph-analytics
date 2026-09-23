@@ -67,6 +67,8 @@ var svg = d3.select('svg'),
       .force('link', d3.forceLink().id(function(d) { return d.id; }))
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(width / 2, height / 2)),
+    //make the force chart to take more distance between groups and nodes
+
     tooltip = d3.select("body")
       .append("div")
       .style("position", "absolute")
@@ -76,7 +78,7 @@ var svg = d3.select('svg'),
       .style("padding", "5px")
       ;
 
-d3.json('miserables.json', function(error, graph) {
+d3.json('data/ewa.json', function(error, graph) {
   if (error) throw error;
 
   // create selector for curve types
@@ -107,7 +109,7 @@ d3.json('miserables.json', function(error, graph) {
     .selectAll('line')
     .data(graph.links)
     .enter().append('line')
-    .attr('stroke-width', (d) => Math.sqrt(d.value));
+    .attr('stroke-width', (d) => Math.sqrt(d.value??1));
 
   node = svg.append('g')
     .attr('class', 'nodes')
