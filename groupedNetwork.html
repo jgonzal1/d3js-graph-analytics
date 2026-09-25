@@ -230,10 +230,10 @@
         .enter()
         .append("rect")
         .attr("x", 60)
-        .attr("y", (d, i) => (44 + (i * 10)))
+        .attr("y", (d, i) => (42 + (i * 15)))
         .attr("visibility", (d, i) => d === "" ? "hidden" : "visible")
-        .attr("fill", (d, i) => color(i))
-        .attr("width", 90)
+        .attr("fill", (d, i) => `${color(i)}99`)
+        .attr("width", 96)
         .attr("height", 12);
 
       legend.append("g")
@@ -242,11 +242,11 @@
         .enter()
         .append("text")
         .attr("x", 62)
-        .attr("y", (d, i) => (50 + (i * 10)))
+        .attr("y", (d, i) => (50 + (i * 15)))
         .attr("visibility", (d, i) => d === "" ? "hidden" : "visible")
         .attr("dominant-baseline", "middle")
         .style("font-size", "10px")
-        .style("font-weight", "normal")
+        .style("font-weight", "bold")
         .text((d) => d);
 
       // Dropdown selector for curve types
