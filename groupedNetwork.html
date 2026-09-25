@@ -50,32 +50,9 @@
       z-index: 10;
     }
 
-    .zoom-controls {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      z-index: 20;
-      background-color: #FFF6
-    }
-
-    .zoom-controls button {
-      width: 36px;
-      height: 30px;
-      border: 1px solid #999;
-      border-radius: 4px;
-      background: #FFFE;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      color: #222;
-    }
-
     .graph-controls {
       position: absolute;
-      top: 120px;
+      top: 12px;
       right: 12px;
       width: 180px;
       background-color: #FFF6;
@@ -105,9 +82,32 @@
       padding: 7px 10px;
       border: 1px solid #999;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.9);
+      background: #FFFE;
       cursor: pointer;
       font-size: 11px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .zoom-controls {
+      position: absolute;
+      top: 160px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 20;
+      background-color: #FFF6
+    }
+
+    .zoom-controls button {
+      width: 36px;
+      height: 30px;
+      border: 1px solid #999;
+      border-radius: 4px;
+      background: #FFFE;
+      cursor: pointer;
+      font-size: 16px;
       font-weight: 600;
       color: #222;
     }
@@ -115,12 +115,6 @@
 </head>
 
 <body>
-  <div class="zoom-controls">
-    <button id="zoomIn" type="button" aria-label="Zoom in">+</button>
-    <button id="zoomOut" type="button" aria-label="Zoom out">−</button>
-    <button id="zoomReset" type="button" aria-label="Reset zoom">⟳</button>
-  </div>
-
   <div class="graph-controls">
     <label for="nodeSpacingSlider">
       <span>Node spacing</span>
@@ -133,6 +127,11 @@
     </label>
     <input id="rotationSlider" type="range" min="-180" max="180" step="1" value="0">
     <button id="logNodesButton" type="button">Log node positions</button>
+  </div>
+  <div class="zoom-controls">
+    <button id="zoomIn" type="button" aria-label="Zoom in">+</button>
+    <button id="zoomOut" type="button" aria-label="Zoom out">−</button>
+    <button id="zoomReset" type="button" aria-label="Reset zoom">⟳</button>
   </div>
   <!-- <div id="controls"> -- Deprecated after inclusion of Voronoi cells
   <div id="scaleFactorSettings">
@@ -224,18 +223,21 @@
       var legend = svg.append("g")
         .attr("class", "legend");
 
-      legend.selectAll("rect")
+
+      legend.append("g")
+        .selectAll("rect")
         .data(graph.network_zones)
         .enter()
         .append("rect")
-        .attr("x", 50)
-        .attr("y", (d, i) => (45 + (i * 10)))
+        .attr("x", 60)
+        .attr("y", (d, i) => (44 + (i * 10)))
         .attr("visibility", (d, i) => d === "" ? "hidden" : "visible")
-        .attr("width", 8)
-        .attr("height", 8)
-        .attr("fill", (d, i) => color(i));
+        .attr("fill", (d, i) => color(i))
+        .attr("width", 90)
+        .attr("height", 12);
 
-      legend.selectAll("text")
+      legend.append("g")
+        .selectAll("text")
         .data(graph.network_zones)
         .enter()
         .append("text")
